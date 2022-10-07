@@ -1,17 +1,9 @@
-package com.example.picturesharing;
+package com.example.picturesharing.pojo;
 
 public class User {
-    private Integer id;
     private String username;
     private String password;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -32,8 +24,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
