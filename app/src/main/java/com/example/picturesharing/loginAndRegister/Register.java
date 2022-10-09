@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
 import com.example.picturesharing.HomePage;
-import com.example.picturesharing.MainActivity;
 import com.example.picturesharing.R;
 import com.example.picturesharing.pojo.LogInPojo;
 import com.example.picturesharing.pojo.RegisterInfo;
@@ -61,9 +60,9 @@ public class Register extends AppCompatActivity {
         confirm = findViewById(R.id.password_repeat);
 
         // 隐藏应用标题
-        ActionBar bar = getSupportActionBar();
-        assert bar != null;
-        bar.hide();
+//        ActionBar bar = getSupportActionBar();
+//        assert bar != null;
+//        bar.hide();
 
         // 将状态栏颜色设为透明
         Window window = this.getWindow();
@@ -140,8 +139,8 @@ public class Register extends AppCompatActivity {
 
             // 添加请求头
             Headers headers = new Headers.Builder()
-                    .add("appId", "833c135f35b54bc5a2f3f9efa81ea3ef")
-                    .add("appSecret", "79728c6d6ae0cf10e419ab6575ced66594951")
+                    .add("appId", "37f41c68f373453187f22ba15da4b36a")
+                    .add("appSecret", "654010ffb1570029c496491c6769a29712897")
                     .add("Accept", "application/json, text/plain, */*")
                     .build();
 
@@ -165,12 +164,12 @@ public class Register extends AppCompatActivity {
                 client.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, IOException e) {
-                        //TODO 请求失败处理
+                        // 请求失败处理
                         e.printStackTrace();
                     }
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
-                        //TODO 请求成功处
+                        // 请求成功处
                         String jsonData = response.body().string();
                         RegisterInfo info = JSON.parseObject(jsonData, RegisterInfo.class);
                         setInfo(info);

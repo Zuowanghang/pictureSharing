@@ -1,9 +1,5 @@
 package com.example.picturesharing;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -17,6 +13,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
 import com.example.picturesharing.loginAndRegister.Register;
@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
 //        view.getBackground().setAlpha(120);
 
         // 隐藏应用标题
-        ActionBar bar = getSupportActionBar();
-        assert bar != null;
-        bar.hide();
+//        ActionBar bar = getSupportActionBar();
+//        assert bar != null;
+//        bar.hide();
 
         // 将状态栏颜色设为透明
         Window window = this.getWindow();
@@ -117,9 +117,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                     case "登录成功": {
-                        String str = "userInfo";
                         Intent i = new Intent(MainActivity.this, HomePage.class);
-                        i.putExtra(str, info.toString());
                         startActivity(i);
                         break;
                     }
@@ -132,7 +130,10 @@ public class MainActivity extends AppCompatActivity {
         // 添加文字下划线
         forgetPassword = findViewById(R.id.forgetPassword);
         forgetPassword.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-        forgetPassword.setOnClickListener(v -> System.out.println("Forget password click"));
+        forgetPassword.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, HomePage.class);
+            startActivity(i);
+        });
 
         register = findViewById(R.id.register);
         register.setOnClickListener(v -> {
@@ -150,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
 
             // 添加请求头
             Headers headers = new Headers.Builder()
-                    .add("appId", "833c135f35b54bc5a2f3f9efa81ea3ef")
-                    .add("appSecret", "79728c6d6ae0cf10e419ab6575ced66594951")
+                    .add("appId", "37f41c68f373453187f22ba15da4b36a")
+                    .add("appSecret", "654010ffb1570029c496491c6769a29712897")
                     .add("Accept", "application/json, text/plain, */*")
                     .build();
 
@@ -174,12 +175,12 @@ public class MainActivity extends AppCompatActivity {
                 client.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, IOException e) {
-                        //TODO 请求失败处理
+                        // 请求失败处理
                         e.printStackTrace();
                     }
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
-                        //TODO 请求成功处
+                        // 请求成功处
                         String jsonData = response.body().string();
                         LogInPojo info = JSON.parseObject(jsonData, LogInPojo.class);
                         System.out.println(info.toString());

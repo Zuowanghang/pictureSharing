@@ -34,10 +34,10 @@
             android:layout_marginEnd="48dp"
             android:background="@drawable/round_corners_bg"
             android:gravity="center"
-            android:textColor="@color/black"
             android:hint="@string/register_name"
             android:inputType="text"
             android:maxLines="1"
+            android:textColor="@color/black"
             android:textSize="25sp" />
 
         <EditText
@@ -89,7 +89,7 @@
             android:layout_marginTop="32dp"
             android:background="@drawable/radius"
             android:backgroundTint="#DCDCDC"
-            android:textColor="@color/teal"
+            android:textColor="@color/darkkhaki"
             android:text="@string/signUp"
             android:layout_margin="16dp"
             android:textSize="20sp"
@@ -105,8 +105,7 @@
             android:background="@drawable/radius"
             android:text="@string/signIn"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
     </RelativeLayout>
 
 

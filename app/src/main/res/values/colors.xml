@@ -152,4 +152,5 @@
     <color name="mediumblue">#0000cd</color><!--中兰色 -->
     <color name="darkblue">#00008b</color><!--暗蓝色 -->
     <color name="navy">#000080</color><!--海军色 -->
+    <color name="color_f6">#f6f6f6</color>
 </resources>

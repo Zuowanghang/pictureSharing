@@ -1,5 +1,7 @@
 package com.example.picturesharing.pojo;
 
+import androidx.annotation.NonNull;
+
 public class User {
     private String username;
     private String password;
@@ -29,6 +31,7 @@ public class User {
         this.password = password;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +

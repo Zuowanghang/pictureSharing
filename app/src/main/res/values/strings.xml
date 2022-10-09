@@ -10,8 +10,19 @@
     <string name="signIn">登录</string>
     <string name="forgetPassword">忘记密码？</string>
     <string name="signUp">注册</string>
+    <string name="hello_blank_fragment">Blank Fragment</string>
     <string name="title_activity_home_page">HomePage</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">首页</string>
+    <string name="title_dashboard">发布</string>
+    <string name="title_notifications">我</string>
+    <string name="editInfo">编辑资料</string>
+    <string name="umbrella">Umbrella</string>
+    <string name="id_20201008">id: 20201008</string>
+    <string name="signature">这个人很懒，什么都没留下。</string>
+    <string name="_50">50</string>
+    <string name="_4">4</string>
+    <string name="subscribe">关注</string>
+    <string name="fans">粉丝</string>
+    <string name="_200">200</string>
+    <string name="fonded">获赞</string>
 </resources>

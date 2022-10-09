@@ -4,7 +4,7 @@
     >
 
     <!-- 填充的颜色 -->
-    <solid android:color="@color/teal" />
+    <solid android:color="@color/darkkhaki" />
 
     <!--  将矩形的四个角设置为圆形  -->
     <corners android:radius="15dp" />
