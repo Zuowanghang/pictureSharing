@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".loginAndRegister.Register"
-
     android:id="@+id/register"
     >
 
@@ -16,7 +15,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="100dp"
         android:text="@string/register"
-        android:textColor="#1565C0"
+        android:textColor="@color/black"
         android:textSize="50sp" />
 
     <RelativeLayout

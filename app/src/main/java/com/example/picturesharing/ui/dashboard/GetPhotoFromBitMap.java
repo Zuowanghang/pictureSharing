@@ -1,12 +1,10 @@
 package com.example.picturesharing.ui.dashboard;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -14,7 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import java.io.ByteArrayOutputStream;
 
-public class GetPhoto extends Fragment {
+public class GetPhotoFromBitMap extends Fragment {
 
     private static Bitmap bitmap = null;
 

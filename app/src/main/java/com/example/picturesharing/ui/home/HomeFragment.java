@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.picturesharing.ItemFragment;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.MyFragmentTitleAdapter;
 import com.example.picturesharing.databinding.FragmentHomeBinding;
@@ -64,14 +65,14 @@ public class HomeFragment extends Fragment {
         mFragmentList = new ArrayList<>();
 
         // New 出一堆 VPFragment 来，然后添加进 List 中
-        VPFragment f1 = VPFragment.newInstance("关注", "");
-        VPFragment f2= VPFragment.newInstance("发现", "");
-
-        mFragmentList.add(f1);
-        mFragmentList.add(f2);
-
-        titleList = new ArrayList<>();
-        titleList.add("关注");
-        titleList.add("发现");
+//        ItemFragment f1 = ItemFragment.newInstance("关注");
+//        ItemFragment f2 = ItemFragment.newInstance("发现");
+//
+//        mFragmentList.add(f1);
+//        mFragmentList.add(f2);
+//
+//        titleList = new ArrayList<>();
+//        titleList.add("关注");
+//        titleList.add("发现");
     }
 }

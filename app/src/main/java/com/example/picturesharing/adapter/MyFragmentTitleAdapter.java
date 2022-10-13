@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import java.util.List;
 
 public class MyFragmentTitleAdapter extends FragmentStatePagerAdapter {
+    // fragment 对象集合，无论是哪一种 Fragment，只要是继承自 Fragment 类，就都可以使用它来使 TabLayout 跟随 Fragment 滑动
     private List<Fragment> fragmentList;
     private List<String> titleList;
 
@@ -27,7 +28,7 @@ public class MyFragmentTitleAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return fragmentList == null ? 0 :fragmentList.size();
+        return fragmentList == null ? 0 : fragmentList.size();
     }
 
     @Nullable

@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
@@ -146,13 +145,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void post(String name, String pwd) {
         new Thread(() -> {
-           // 请求路径
+            // 请求路径
             String url = "http://47.107.52.7:88/member/photo/user/login?password=" + pwd + "&username=" + name;
 
             // 添加请求头
             Headers headers = new Headers.Builder()
-                    .add("appId", "37f41c68f373453187f22ba15da4b36a")
-                    .add("appSecret", "654010ffb1570029c496491c6769a29712897")
+                    .add("appId", "0016f121eec448db99e4cb81c8528ae3")
+                    .add("appSecret", "333755eaacc0bacf047a381d4886be2900c4e")
                     .add("Accept", "application/json, text/plain, */*")
                     .build();
 
@@ -178,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
                         // 请求失败处理
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
                         // 请求成功处
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                         setInfo(info);
                     }
                 });
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();

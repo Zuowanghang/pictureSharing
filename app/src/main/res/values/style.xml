@@ -4,4 +4,9 @@
         <item name="android:textSize">20dp</item>
 <!--        <item name="android:textStyle">bold</item>-->
     </style>
+
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#d1d1d1</item>
+    </style>
+
 </resources>

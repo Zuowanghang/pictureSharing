@@ -25,4 +25,12 @@
     <string name="fans">粉丝</string>
     <string name="_200">200</string>
     <string name="fonded">获赞</string>
+    <string name="release_title">标题</string>
+    <string name="editYourText">编辑你的文本吧~</string>
+    <string name="releasePic">发布</string>
+    <string name="item_title">#休闲时光#</string>
+    <string name="item_name">陈Kevin</string>
+    <string name="modify_info">编辑资料</string>
+    <string name="nick_name">昵称</string>
+    <string name="release_topic">话题</string>
 </resources>
