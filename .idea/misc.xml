@@ -3,47 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_baseline_lock_24.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_baseline_person_outline_24.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_baseline_visibility_24.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_baseline_visibility_off_24.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_launcher_background.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.163" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/edit_button.xml" value="0.121" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.1" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_baseline_visibility_24.xml" value="0.163" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_baseline_visibility_off_24.xml" value="0.163" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.163" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.126" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.126" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/radius.xml" value="0.1" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/round_corners_bg.xml" value="0.163" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_home_page.xml" value="0.23020833333333332" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_main.xml" value="0.2" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/card_view.xml" value="0.17265625" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/forget_password.xml" value="0.15307971014492755" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_dashboard.xml" value="0.10208333333333333" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_home.xml" value="0.1" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_notifications.xml" value="0.264" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_v_p.xml" value="0.264" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/item_filter.xml" value="0.11614583333333334" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/modify_personal_info.xml" value="0.1" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/personal.xml" value="0.23020833333333332" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/recycleview_item.xml" value="0.10104166666666667" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/register.xml" value="0.2" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/release_page.xml" value="0.11510416666666666" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/sign_in.xml" value="0.22916666666666666" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2405" />
-        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2405" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_about_us.xml" value="0.23020833333333332" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_my_settings.xml" value="0.264" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_notifications.xml" value="0.1" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/modify_personal_info.xml" value="0.264" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/build/classes" />
-  </component>
-  <component name="ProjectType">
-    <option name="id" value="Android" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.picturesharing.ItemFragment;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.MyFragmentTitleAdapter;
 import com.example.picturesharing.databinding.FragmentHomeBinding;

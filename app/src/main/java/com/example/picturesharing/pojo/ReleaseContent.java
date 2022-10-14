@@ -3,6 +3,7 @@ package com.example.picturesharing.pojo;
 import java.util.ArrayList;
 
 public class ReleaseContent {
+    public static String savedData;
     private ArrayList<String> images;
     private String title;
     private String content;
