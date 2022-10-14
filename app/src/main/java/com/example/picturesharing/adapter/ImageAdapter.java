@@ -1,5 +1,6 @@
 package com.example.picturesharing.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     private ArrayList<String> images;
     private LayoutInflater mInflater;
     private boolean isAndroidQ = VersionUtils.isAndroidQ();
+    private OnImageListener listener = null;
 
     private FragmentDashboardBinding binding;
 
@@ -39,11 +41,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.layout_image, parent, false);
+
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String image = images.get(position);
         boolean isCutImage = ImageUtil.isCutImage(mContext, image);
         if (isAndroidQ && !isCutImage) {
@@ -51,6 +54,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         } else {
             Glide.with(mContext).load(image).into(holder.imageView);
         }
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onDelete(position);
+                }
+            }
+        });
     }
 
     public void refresh(ArrayList<String> images) {
@@ -79,5 +91,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             super(itemView);
             imageView = itemView.findViewById(R.id.imageHolder);
         }
+    }
+
+    public interface OnImageListener {
+        public void onDelete(int id);
+    }
+
+    public void setOnImageDeleteListener(OnImageListener listener) {
+        this.listener = listener;
     }
 }

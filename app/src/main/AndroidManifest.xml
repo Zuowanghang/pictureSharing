@@ -4,7 +4,8 @@
     package="com.example.picturesharing">
     <!-- 储存卡的读写权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" /> <!-- 调用相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 网络 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -22,16 +23,10 @@
         android:theme="@style/Theme.PictureSharing"
         tools:replace="android:theme"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name=".PictureSelect"-->
-<!--            android:exported="false" />-->
-        <!-- 首页活动，首页、发布以及我之间的切换 -->
         <activity
-            android:name=".HomePage"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            android:exported="false"
-            android:label="@string/title_activity_home_page" />
+            android:name=".MySettings"
+            android:exported="false" />
+        <!-- 首页活动，首页、发布以及我之间的切换 -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -49,6 +44,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".HomePage"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PersonalInfoModify"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.picturesharing.HomePage" />
         </activity> <!-- //图片选择Activity -->
         <!-- //去掉Activity的ActionBar。 -->
         <!-- //使用者可以根据自己的项目去配置，不一定要这样写，只要让Activity的ActionBar去掉就可以了。 -->
@@ -65,16 +84,9 @@
         <activity
             android:name="com.donkingliang.imageselector.ClipImageActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-<!--        <provider-->
-<!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="picture"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/file_paths" />-->
-<!--        </provider>-->
+        <activity
+            android:name=".AboutUs"
+            android:exported="false" />
     </application>
 
 </manifest>

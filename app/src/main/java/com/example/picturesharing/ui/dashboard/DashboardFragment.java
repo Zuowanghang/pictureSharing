@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,33 +20,55 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
+import com.example.picturesharing.pojo.ReleaseContent;
 
 import java.util.ArrayList;
 
 public class DashboardFragment extends Fragment implements View.OnClickListener {
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
-
     private ArrayList<String> selected;
-
+    private ImageAdapter adapter;
     private RecyclerView recyclerView;
     private FragmentDashboardBinding binding;
-    private ImageAdapter adapter;
     private EditText title;
     private EditText content;
+    private ImageView draft;
+    private ImageView cancel;
+    private ImageView imageSelector;
+    private ReleaseContent releaseContent;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        System.out.println("On Create DashBoard");
         DashboardViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(DashboardViewModel.class);
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
 
         View root = binding.getRoot();
+
+        title = root.findViewById(R.id.article_title);
+        content = root.findViewById(R.id.article_content);
+        imageSelector = root.findViewById(R.id.imageSelector);
+        imageSelector.setOnClickListener(this);
+
+        draft = root.findViewById(R.id.draft);
+        draft.setOnClickListener(this);
+
+        cancel = root.findViewById(R.id.cancel);
+        cancel.setOnClickListener(this);
+
+        adapter = new ImageAdapter(getContext());
+        adapter.setOnImageDeleteListener(this::removeData);
+        recyclerView = root.findViewById(R.id.rlv);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        recyclerView.setAdapter(adapter);
 
         // 获取权限
         int hasWriteExternalPermission = ContextCompat.checkSelfPermission(requireActivity(),
@@ -64,15 +87,28 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        System.out.println("On View Created");
         super.onViewCreated(view, savedInstanceState);
+        System.out.println("On View Created");
 
-        title = view.findViewById(R.id.article_title);
-        content = view.findViewById(R.id.article_content);
+        if (releaseContent != null) {
+            selected = releaseContent.getImages();
+            title.setText(releaseContent.getTitle());
+            content.setText(releaseContent.getContent());
 
-        recyclerView = view.findViewById(R.id.rlv);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        ImageAdapter adapter = new ImageAdapter(getActivity());
-        recyclerView.setAdapter(adapter);
+            adapter = new ImageAdapter(getContext());
+            adapter.setOnImageDeleteListener(this::removeData);
+            recyclerView = view.findViewById(R.id.rlv);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            recyclerView.setAdapter(adapter);
+        } else {
+            System.out.println("Test failed");
+        }
+    }
+
+    private void removeData(int id) {
+        selected.remove(id);
+        adapter.refresh(selected);
     }
 
     /**
@@ -97,6 +133,13 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        System.out.println(ReleaseContent.savedData);
+        releaseContent = JSON.parseObject(ReleaseContent.savedData, ReleaseContent.class);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println(data);
@@ -112,8 +155,17 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 //            Log.d("ImageSelector", "是否是拍照图片：" + isCameraImage);
             adapter = new ImageAdapter(getActivity());
             adapter.setImages(selected);
+            adapter.setOnImageDeleteListener(this::removeData);
             recyclerView.setAdapter(adapter);
 
+
+            // 将现有数据存入savedData
+            ReleaseContent info = new ReleaseContent();
+            info.setImages(selected);
+            info.setTitle(title.getText().toString());
+            info.setContent(content.getText().toString());
+            ReleaseContent.savedData = JSON.toJSONString(info);
+            System.out.println(JSON.toJSONString(info));
         } else {
             System.out.println(data);
         }
@@ -140,10 +192,12 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
             case R.id.release: {
                 release();
+                ReleaseContent.savedData = null;
                 break;
             }
             case R.id.draft: {
                 saveAsDraft();
+                ReleaseContent.savedData = null;
                 break;
             }
         }

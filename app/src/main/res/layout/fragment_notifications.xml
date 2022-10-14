@@ -3,25 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.notifications.NotificationsFragment">
+    android:layout_height="wrap_content"
+    tools:context=".ui.notifications.NotificationsFragment"
+    android:fitsSystemWindows="true"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        >
         <Toolbar
             android:id="@+id/personalToolBar"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="#35a079"
             app:layout_constraintTop_toTopOf="parent">
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+                android:layout_height="match_parent"
+                >
                 <ImageView
+                    android:id="@+id/menu"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="20dp"
@@ -78,13 +80,14 @@
                         android:layout_height="wrap_content"
                         android:text="@string/id_20201008"
                         android:textColor="@color/white"
+                        android:layout_marginTop="5dp"
                         android:textSize="11sp"
                         />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="8dp"
                         android:orientation="horizontal">
 
                         <ImageView
@@ -93,14 +96,15 @@
                             android:background="@drawable/edit_button"
                             android:src="@drawable/male" />
 
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/lv12" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="60dp"-->
+<!--                            android:layout_height="30dp"-->
+<!--                            android:src="@drawable/lv12" />-->
                     </LinearLayout>
                 </LinearLayout>
 
                 <Button
+                    android:id="@+id/modify"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
