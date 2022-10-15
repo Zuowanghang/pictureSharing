@@ -1,9 +1,12 @@
 package com.example.picturesharing.ui.home;
 
+import android.content.Intent;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.picturesharing.R;
+import com.example.picturesharing.ShareDetails;
 import com.example.picturesharing.adapter.MyFragmentTitleAdapter;
 import com.example.picturesharing.databinding.FragmentHomeBinding;
 import com.google.android.material.tabs.TabLayout;
@@ -50,6 +54,15 @@ public class HomeFragment extends Fragment {
 
         mViewPager = view.findViewById(R.id.homeViewPager);
         mTabLayout = view.findViewById(R.id.tabLayout);
+
+        Button button = view.findViewById(R.id.btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(requireActivity(), ShareDetails.class);
+                startActivity(i);
+            }
+        });
 
         // 初始化数据
         initData();

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".loginAndRegister.Register"
-    android:id="@+id/register"
-    >
+    android:orientation="vertical"
+    tools:context=".Register">
 
     <!--  注册页面主体android:background="@drawable/login_bg"  -->
     <TextView
@@ -21,8 +20,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        >
+        android:layout_marginTop="40dp">
 
         <EditText
             android:id="@+id/register_name"
@@ -50,9 +48,9 @@
             android:background="@drawable/round_corners_bg"
             android:gravity="center"
             android:hint="@string/register_password"
-            android:textColor="@color/black"
             android:inputType="textPassword"
             android:maxLines="1"
+            android:textColor="@color/black"
             android:textSize="25sp" />
 
         <EditText
@@ -66,9 +64,9 @@
             android:background="@drawable/round_corners_bg"
             android:gravity="center"
             android:hint="@string/password_repeat"
-            android:textColor="@color/black"
             android:inputType="textPassword"
             android:maxLines="1"
+            android:textColor="@color/black"
             android:textSize="25sp" />
 
     </RelativeLayout>
@@ -76,23 +74,21 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="80dp"
-        >
+        android:layout_weight="1">
 
         <Button
             android:id="@+id/registerBtn"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
+            android:layout_margin="16dp"
             android:layout_marginTop="32dp"
             android:background="@drawable/radius"
             android:backgroundTint="#DCDCDC"
-            android:textColor="@color/darkkhaki"
             android:text="@string/signUp"
-            android:layout_margin="16dp"
-            android:textSize="20sp"
-            />
+            android:textColor="@color/darkkhaki"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/logInBtn"
@@ -106,8 +102,6 @@
             android:textColor="@android:color/white"
             android:textSize="20sp" />
     </RelativeLayout>
-
-
 
 
 </LinearLayout>

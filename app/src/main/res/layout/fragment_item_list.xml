@@ -6,10 +6,9 @@
     android:name="com.example.picturesharing.ItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutManager="GridLayoutManager"
-    tools:context=".ItemFragment"
     android:background="#f4f6f6"
-    >
+    app:layoutManager="GridLayoutManager"
+    tools:context=".ItemFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewHome"
@@ -17,7 +16,6 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        tools:listitem="@layout/fragment_item"
-        />
+        tools:listitem="@layout/fragment_item" />
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

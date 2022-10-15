@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/logIn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/logIn"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
     <!-- 账号栏android:background="@drawable/login_bg" -->
     <TextView
@@ -26,10 +26,9 @@
         <ImageView
             android:layout_width="32dp"
             android:layout_height="50dp"
-            android:layout_marginStart="10dp"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_baseline_account_circle_24"
-            />
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_baseline_account_circle_24" />
         <!-- 提示词和下划线 -->
         <EditText
             android:id="@+id/logInUsername"
@@ -49,15 +48,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        >
+        android:layout_marginTop="20dp">
         <!-- 图片显示，true是，是否显示图片 -->
         <ImageView
             android:layout_width="32dp"
             android:layout_height="50dp"
-            android:layout_marginStart="10dp"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_baseline_lock_24"/>
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_baseline_lock_24" />
 
         <!-- 提示词和下划线 -->
         <EditText
@@ -69,21 +67,21 @@
             android:layout_marginStart="48dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="4dp"
+            android:autofillHints="密码"
             android:hint="@string/password"
-            android:textColor="@color/black"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:autofillHints="密码" />
+            android:textColor="@color/black" />
 
         <!-- 密码可见，不可见的眼睛图标 -->
         <ImageView
             android:id="@+id/iv_pwd_switch"
             android:layout_width="32dp"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="6dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginEnd="30dp"
+            android:layout_marginBottom="6dp"
             android:src="@drawable/ic_baseline_visibility_off_24" />
 
     </RelativeLayout>
@@ -91,11 +89,10 @@
     <!-- 登录按钮 -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_weight="1"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        >
+        android:layout_weight="1">
 
         <Button
             android:id="@+id/signIn"
@@ -115,9 +112,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="150dp"
         android:orientation="horizontal"
-        android:paddingTop="20dp"
-        android:layout_marginBottom="150dp">
+        android:paddingTop="20dp">
         <!-- 忘记 -->
         <TextView
             android:id="@+id/forgetPassword"

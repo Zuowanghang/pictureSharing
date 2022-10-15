@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 网络 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 获取网络图片 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -24,9 +26,11 @@
         tools:replace="android:theme"
         tools:targetApi="31">
         <activity
-            android:name=".MySettings"
+            android:name=".ShareDetails"
             android:exported="false" />
-        <!-- 首页活动，首页、发布以及我之间的切换 -->
+        <activity
+            android:name=".MySettings"
+            android:exported="false" /> <!-- 首页活动，首页、发布以及我之间的切换 -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -37,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".loginAndRegister.Register"
+            android:name=".Register"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.register" />

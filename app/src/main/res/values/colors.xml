@@ -155,6 +155,8 @@
     <color name="color_f6">#f6f6f6</color>
     <color name="lightlyDarkWhite">#f0f0f5</color>
     <color name="gray9">#171717</color>
-    <color name="gray3">#afafaf</color>
+    <color name="gray3">#ededed</color>
     <color name="white3">#f8f8f8</color>
+    <color name="personalData">#35a079</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>

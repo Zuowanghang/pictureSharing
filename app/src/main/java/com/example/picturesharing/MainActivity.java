@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
-import com.example.picturesharing.loginAndRegister.Register;
 import com.example.picturesharing.pojo.LogInPojo;
 import com.example.picturesharing.pojo.User;
 

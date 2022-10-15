@@ -1,8 +1,8 @@
 package com.example.picturesharing;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class AboutUs extends AppCompatActivity {
 

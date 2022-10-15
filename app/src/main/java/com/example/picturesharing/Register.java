@@ -1,4 +1,4 @@
-package com.example.picturesharing.loginAndRegister;
+package com.example.picturesharing;
 
 import android.content.Intent;
 import android.os.Bundle;

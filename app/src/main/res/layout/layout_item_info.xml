@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     android:paddingLeft="0dp">
 
     <LinearLayout
@@ -29,11 +29,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
             android:background="@null"
+            android:gravity="center_vertical"
             android:hint="请输入姓名"
-            android:singleLine="true"
             android:paddingLeft="25px"
+            android:singleLine="true"
             android:textColor="@color/gray9"
             android:textSize="13sp" />
 
