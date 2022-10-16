@@ -1,6 +1,7 @@
 package com.example.picturesharing;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
@@ -38,6 +39,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 public class ItemFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     String appid = UserData.appId;
@@ -50,7 +52,7 @@ public class ItemFragment extends Fragment {
     private ListFragment listFragment;
     private RecyclerView recyclerView;
     private Gson gson ;
-
+public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
     public ItemFragment() {
     }
 
@@ -138,7 +140,7 @@ public class ItemFragment extends Fragment {
                         PlaceholderContent data;
                         data = JSON.parseObject(jsonData, PlaceholderContent.class);
                         list = data.getData().getRecords();
-//                       Log.i("ssssssssssssss",gson.toJson(list));
+//                       Log.i("ssssssssssssss",JSON.toJSONString(list));
                         view.post(new Runnable() {
                             @Override
                             public void run() {
@@ -220,13 +222,14 @@ public class ItemFragment extends Fragment {
         }
 
         @Override
-        public MyItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
 
         @Override
-        public void onBindViewHolder(final MyItemRecyclerViewAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
+
             view.post(new Runnable() {
                 @Override
                 public void run() {
@@ -235,6 +238,18 @@ public class ItemFragment extends Fragment {
                     } catch (Exception e) {
                         Glide.with(view).load("https://flashlight.nitecore.cn/Uploads/Album/20181112/original_img/201811121046183873.png").into(holder.discoverImage);
                     }
+                    holder.discoverImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            UserData.setPictureId( holder.mItem.getId());
+                            UserData.setImageUrlList(holder.mItem.getImageUrlList());
+                            Intent intent = new Intent(getContext(), PictureActivity.class);
+//                          intent.putExtra( MESSAGE_STRING, message);
+                          startActivity(intent);
+
+                        }
+                    });
 
                 }
             });
@@ -332,6 +347,7 @@ public class ItemFragment extends Fragment {
 
             public ViewHolder(FragmentItemBinding binding) {
                 super(binding.getRoot());
+
                 discoverImage = binding.discoverImageItem;
                 mTvTitle = binding.tvTitle;
                 mAccessImage = binding.accessImg;

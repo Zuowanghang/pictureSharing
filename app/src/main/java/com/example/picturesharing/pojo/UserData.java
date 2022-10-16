@@ -3,10 +3,28 @@ package com.example.picturesharing.pojo;
 public class UserData {
 
 
-    public static String appId = "9fa35fba78d94dc7a3c0c7da666b00b8";
-    public  static String appSecret ="70941057f9dd513fa453585f6ca5832a6db78";
-    private static String userid = "1579762298157928448";
-    private static String appKey = "9fa35fba78d94dc7a3c0c7da666b00b8";
+    public static String appId = "006d846c73764779a25da7c1c1eae6db";
+    public  static String appSecret ="46977249b3cc45fba493aa6d14f99ff77a47e";
+    private static String userid = "1579485016243703808";
+    private static String appKey = "006d846c73764779a25da7c1c1eae6db";
+    private static String pictureId ="-1";
+    private  static  String [] imageUrlList = null;
+
+    public static String[] getImageUrlList() {
+        return imageUrlList;
+    }
+
+    public static void setImageUrlList(String[] imageUrlList) {
+        UserData.imageUrlList = imageUrlList;
+    }
+
+    public static String getPictureId() {
+        return pictureId;
+    }
+
+    public static void setPictureId(String pictureId) {
+        UserData.pictureId = pictureId;
+    }
 
     public static String getAppKey() {
         return appKey;
@@ -16,7 +34,7 @@ public class UserData {
         UserData.appKey = appKey;
     }
 
-    public  UserData(){
+    public UserData(){
 
 
     }

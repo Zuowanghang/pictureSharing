@@ -5,9 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -25,11 +28,34 @@ import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
+import com.example.picturesharing.placeholder.PlaceholderContent;
+import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
+import com.example.picturesharing.pojo.User;
+import com.example.picturesharing.pojo.UserData;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class DashboardFragment extends Fragment implements View.OnClickListener {
+    private Gson gson;
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
     private ArrayList<String> selected;
@@ -42,7 +68,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ImageView cancel;
     private ImageView imageSelector;
     private ReleaseContent releaseContent;
-
+    private Button release;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         System.out.println("On Create DashBoard");
@@ -63,6 +89,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         cancel = root.findViewById(R.id.cancel);
         cancel.setOnClickListener(this);
+
+        release = binding.release;
+        release.setOnClickListener(this);
 
         adapter = new ImageAdapter(getContext());
         adapter.setOnImageDeleteListener(this::removeData);
@@ -211,5 +240,200 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     // 发布
     private void release() {
 
+        if (selected != null){
+            postPicture();
+
+            System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss"+selected);
+        }
+
+
+
+
+
+
+
     }
+
+
+    private void postPicture(){  Callback callback = new Callback() {
+        @Override
+        public void onFailure(@NonNull Call call, IOException e) {
+            //TODO 请求失败处理
+            e.printStackTrace();
+        }
+        @Override
+        public void onResponse(@NonNull Call call, Response response) throws IOException {
+            //TODO 请求成功处理
+            Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+            // 获取响应体的json串
+            //
+            String jsonData = response.body().string();
+
+            Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaainfo", jsonData);
+            // 解析json串到自己封装的状态
+            PostImage data;
+            data = JSON.parseObject(jsonData, PostImage.class);
+            post(data.getData().getImageCode());
+            String[] path = data.getData().getImageUrlList();
+
+            for (int i = 0 ; i < data.getData().getImageUrlList().length;i++){
+                System.out.println(path[i]);
+
+            }
+
+
+
+
+        }
+    };
+
+        new Thread(() -> {
+            List<String> filePaths = selected;
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/image/upload";
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+
+            MediaType mediaType = MediaType.parse("multipart/form-data");//设置类型，类型为八位字节流
+            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            for (int i = 0; i < filePaths.size(); i++) { //对文件进行遍历
+                String fname = filePaths.get(i);
+                File tempfile = new File(fname);
+                //根据文件的后缀名，获得文件类型
+                builder.setType(MultipartBody.FORM)
+
+                        .addFormDataPart( //给Builder添加上传的文件
+                                "fileList",  //请求的名字
+                                tempfile.getName(), //文件的文字，服务器端用来解析的
+                                RequestBody.create(MediaType.parse("multipart/form-data"), tempfile)//创建RequestBody，把上传的文件放入
+                        );
+            }
+            MultipartBody requestBody = builder.build();
+            Request request = new Request.Builder()
+                    .headers(headers)
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            }catch (NetworkOnMainThreadException ex){
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+    private void post(String imageCode){
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                // 获取响应体的json串
+                String body = response.body().string();
+                Log.d("info", body);
+                // 解析json串到自己封装的状态
+
+                ResponseBody<Object> dataResponseBody = JSON.parseObject(body,jsonType);
+                Log.d("info", dataResponseBody.toString());
+            }
+        };
+
+        new Thread(() -> {
+
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/share/add";
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("Accept", "application/json, text/plain, */*")
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Content-Type", "application/json")
+                    .build();
+
+            // 请求体
+            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+            Map<String, Object> bodyMap = new HashMap<>();
+            bodyMap.put("imageCode", imageCode);
+            bodyMap.put("pUserId", UserData.getUserid());
+            bodyMap.put("title", title.getText());
+            bodyMap.put("content", content.getText());
+            // 将Map转换为字符串类型加入请求体中
+            String body = JSON.toJSONString(bodyMap);
+            Log.i("ttttttttttttttttttttttttttttttttttttttttttttttttttttt", body);
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            }catch (NetworkOnMainThreadException ex){
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * 回调
+     */
+
+
+
+
+    public static class ResponseBody <T> {
+
+        /**
+         * 业务响应码
+         */
+        private int code;
+        /**
+         * 响应提示信息
+         */
+        private String msg;
+        /**
+         * 响应数据
+         */
+        private T data;
+
+        public ResponseBody(){}
+
+        public int getCode() {
+            return code;
+        }
+        public String getMsg() {
+            return msg;
+        }
+        public T getData() {
+            return data;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "ResponseBody{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    ", data=" + data +
+                    '}';
+        }
+    }
+
 }
