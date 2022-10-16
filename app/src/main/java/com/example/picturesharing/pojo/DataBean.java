@@ -50,37 +50,38 @@ public class DataBean {
      * 仿淘宝商品详情第一个是视频
      * @return
      */
-    public static List<DataBean> getTestDataVideo() {
-        List<DataBean> list = new ArrayList<>();
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4", "第一个放视频", 2));
-        list.add(new DataBean(R.drawable.image7, "听风.赏雨", 1));
-        list.add(new DataBean(R.drawable.image8, "迪丽热巴.迪力木拉提", 1));
-        list.add(new DataBean(R.drawable.image9, "爱美.人间有之", 1));
-        list.add(new DataBean(R.drawable.image10, "洋洋洋.气质篇", 1));
-        list.add(new DataBean(R.drawable.image11, "生活的态度", 1));
-        return list;
-    }
+//    public static List<DataBean> getTestDataVideo() {
+//        List<DataBean> list = new ArrayList<>();
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4", "第一个放视频", 2));
+//        list.add(new DataBean(R.drawable.image7, "听风.赏雨", 1));
+//        list.add(new DataBean(R.drawable.image8, "迪丽热巴.迪力木拉提", 1));
+//        list.add(new DataBean(R.drawable.image9, "爱美.人间有之", 1));
+//        list.add(new DataBean(R.drawable.image10, "洋洋洋.气质篇", 1));
+//        list.add(new DataBean(R.drawable.image11, "生活的态度", 1));
+//        return list;
+//    }
 
     public static List<DataBean> getTestData3() {
         List<DataBean> list = new ArrayList<>();
-        list.add(new DataBean("https://img.zcool.cn/community/013de756fb63036ac7257948747896.jpg", null, 1));
-        list.add(new DataBean("https://img.zcool.cn/community/01639a56fb62ff6ac725794891960d.jpg", null, 1));
-        list.add(new DataBean("https://img.zcool.cn/community/01270156fb62fd6ac72579485aa893.jpg", null, 1));
-        list.add(new DataBean("https://img.zcool.cn/community/01233056fb62fe32f875a9447400e1.jpg", null, 1));
-        list.add(new DataBean("https://img.zcool.cn/community/016a2256fb63006ac7257948f83349.jpg", null, 1));
+        String url[] = UserData.getImageUrlList();
+        for (int i = 0; i < UserData.getImageUrlList().length;i++){
+            list.add(new DataBean(url[i], null, 1));
+        }
+
+
         return list;
     }
 
-    public static List<DataBean> getVideos() {
-        List<DataBean> list = new ArrayList<>();
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4", null, 0));
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4", null, 0));
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/18/mp4/190318214226685784.mp4", null, 0));
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/19/mp4/190319125415785691.mp4", null, 0));
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4", null, 0));
-        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/14/mp4/190314102306987969.mp4", null, 0));
-        return list;
-    }
+//    public static List<DataBean> getVideos() {
+//        List<DataBean> list = new ArrayList<>();
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4", null, 0));
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4", null, 0));
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/18/mp4/190318214226685784.mp4", null, 0));
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/19/mp4/190319125415785691.mp4", null, 0));
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4", null, 0));
+//        list.add(new DataBean("http://vfx.mtime.cn/Video/2019/03/14/mp4/190314102306987969.mp4", null, 0));
+//        return list;
+//    }
 
 
     public static List<String> getColors(int size) {

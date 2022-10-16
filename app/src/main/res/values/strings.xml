@@ -43,4 +43,12 @@
     <string name="aboutUs">关于我们</string>
     <string name="timeStamp">20-10-15</string>
     <string name="_666">666</string>
+    <string name="rememberPassword">记住密码</string>
+
+    <!--  需要保存的个人信息  -->
+    <string name="appName">pictureSharing</string>
+    <string name="shared_preferences_file_name">sp_logIn</string>
+    <string name="account_username">name</string>
+    <string name="account_password">pwd</string>
+    <string name="logIn_remember_password">login_remember_password</string>
 </resources>

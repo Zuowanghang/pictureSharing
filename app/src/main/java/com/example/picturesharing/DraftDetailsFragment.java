@@ -1,7 +1,8 @@
-package com.example.picturesharing.ui.dashboard;
+package com.example.picturesharing;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,12 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
-import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
+import com.example.picturesharing.pojo.SavePictureBean;
 import com.example.picturesharing.pojo.UserData;
+import com.example.picturesharing.ui.dashboard.DashboardViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -52,7 +54,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DashboardFragment extends Fragment implements View.OnClickListener {
+public class DraftDetailsFragment extends Fragment implements View.OnClickListener {
     private Gson gson;
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
@@ -68,8 +70,22 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ReleaseContent releaseContent;
     private Button release;
     private String imageCode;
+    private SavePictureBean.Data.Records data;
+
+
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+//进来给赋值
+
+
+
+
+
+
+
+
         System.out.println("On Create DashBoard");
         DashboardViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(DashboardViewModel.class);
@@ -86,6 +102,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         draft = root.findViewById(R.id.draft);
         draft.setOnClickListener(this);
 
+
+
+
         cancel = root.findViewById(R.id.cancel);
         cancel.setOnClickListener(this);
 
@@ -97,6 +116,19 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         recyclerView = root.findViewById(R.id.rlv);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         recyclerView.setAdapter(adapter);
+
+
+
+        title.setText(UserData.getSavePictureData().getTitle());
+        content.setText(UserData.getSavePictureData().getContent());
+        String path = "/storage/emulated/0/Pictures/Screenshots/Screenshot_2022-10-16-19-40-07-12_e41039de8eaacf222a951c16e0560c66.jpg";
+//        System.out.println("sssssssssssssssssssssssssssssssssssssssssssssssssaaa"+path[0]);
+        ArrayList<String> UUrl = new ArrayList<>();
+
+        UUrl.add(path);
+
+//
+//
 
         // 获取权限
         int hasWriteExternalPermission = ContextCompat.checkSelfPermission(requireActivity(),
@@ -112,6 +144,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         System.out.println("On View Created");
@@ -123,8 +156,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             title.setText(releaseContent.getTitle());
             content.setText(releaseContent.getContent());
 
-            adapter = new ImageAdapter(requireContext());
-            adapter.refresh(selected);
+            adapter = new ImageAdapter(getContext());
             adapter.setOnImageDeleteListener(this::removeData);
             recyclerView = view.findViewById(R.id.rlv);
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -137,16 +169,12 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private void removeData(int id) {
         selected.remove(id);
         adapter.refresh(selected);
-        // 本意是更新其中数据，但是实际运行过程中报错
-//        releaseContent.setImages(selected);
-        ReleaseContent.savedData = JSON.toJSONString(releaseContent);
     }
 
     /**
      * 处理权限申请的回调函数
-     *
-     * @param requestCode  申请码
-     * @param permissions  权限名，可多个
+     * @param requestCode 申请码
+     * @param permissions 权限名，可多个
      * @param grantResults 授权结果
      */
     @Override
@@ -163,19 +191,23 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         System.out.println(ReleaseContent.savedData);
         releaseContent = JSON.parseObject(ReleaseContent.savedData, ReleaseContent.class);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println(data);
 
         if (requestCode == REQUEST_CODE && data != null) {
-            if (selected == null) {
+            if (selected == null ) {
                 selected = data.getStringArrayListExtra(ImageSelector.SELECT_RESULT);
             } else {
                 selected.addAll(data.getStringArrayListExtra(ImageSelector.SELECT_RESULT));
@@ -200,9 +232,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             System.out.println(data);
         }
     }
-    public void setSelected(ArrayList<String> selected) {
-        this.selected = selected;
-    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -217,12 +247,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
-                ReleaseContent.savedData = null;
-                releaseContent = null;
                 title.setText("");
                 content.setText("");
                 selected.clear();
-                adapter.refresh(selected);
                 break;
             }
             case R.id.release: {
@@ -237,6 +264,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }
     }
+
     // 存为草稿
     private void saveAsDraft() {
         if (selected != null){
@@ -245,6 +273,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss"+selected);
         }
     }
+
     // 发布
     private void release() {
 
@@ -255,7 +284,13 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
 
 
+
+
+
+
+
     }
+
 
     private void postPicture(int n){  Callback callback = new Callback() {
         @Override
@@ -395,6 +430,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }).start();
     }
+
+
     //保存图片分享
     private void savePost(String imageCode){
 
@@ -457,6 +494,23 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }).start();
     }
+
+    /**
+     * 回调
+     */
+
+
+    /**
+     * http响应体的封装协议
+     * @param <T> 泛型
+     */
+
+    /**
+     * 回调
+     */
+
+
+
 
     public static class ResponseBody <T> {
 

@@ -116,12 +116,14 @@ public class NotificationsFragment extends Fragment {
         titleList = new ArrayList<>();
 
         fragmentList.add(BlankFragment.newInstance("动态", ""));
-        fragmentList.add(BlankFragment.newInstance("收藏", ""));
-        fragmentList.add(BlankFragment.newInstance("赞过", ""));
+        fragmentList.add(CollectFragment.newInstance("收藏"));
+        fragmentList.add(HasLikeFragment.newInstance("赞过"));
+        fragmentList.add(SavePictureFragment.newInstance("草稿箱"));
 
         titleList.add("关注");
         titleList.add("收藏");
         titleList.add("赞过");
+        titleList.add("草稿箱");
     }
 
     public static abstract class AppBarListener implements AppBarLayout.OnOffsetChangedListener {

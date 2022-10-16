@@ -52,7 +52,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class DashboardFragment extends Fragment implements View.OnClickListener {
+public class DashboardFragment2 extends Fragment implements View.OnClickListener {
     private Gson gson;
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
@@ -112,6 +112,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         System.out.println("On View Created");
@@ -123,8 +124,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             title.setText(releaseContent.getTitle());
             content.setText(releaseContent.getContent());
 
-            adapter = new ImageAdapter(requireContext());
-            adapter.refresh(selected);
+            adapter = new ImageAdapter(getContext());
             adapter.setOnImageDeleteListener(this::removeData);
             recyclerView = view.findViewById(R.id.rlv);
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -137,16 +137,12 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private void removeData(int id) {
         selected.remove(id);
         adapter.refresh(selected);
-        // 本意是更新其中数据，但是实际运行过程中报错
-//        releaseContent.setImages(selected);
-        ReleaseContent.savedData = JSON.toJSONString(releaseContent);
     }
 
     /**
      * 处理权限申请的回调函数
-     *
-     * @param requestCode  申请码
-     * @param permissions  权限名，可多个
+     * @param requestCode 申请码
+     * @param permissions 权限名，可多个
      * @param grantResults 授权结果
      */
     @Override
@@ -163,19 +159,21 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println(ReleaseContent.savedData);
         releaseContent = JSON.parseObject(ReleaseContent.savedData, ReleaseContent.class);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println(data);
 
         if (requestCode == REQUEST_CODE && data != null) {
-            if (selected == null) {
+            if (selected == null ) {
                 selected = data.getStringArrayListExtra(ImageSelector.SELECT_RESULT);
             } else {
                 selected.addAll(data.getStringArrayListExtra(ImageSelector.SELECT_RESULT));
@@ -200,9 +198,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             System.out.println(data);
         }
     }
-    public void setSelected(ArrayList<String> selected) {
-        this.selected = selected;
-    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -217,12 +213,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
-                ReleaseContent.savedData = null;
-                releaseContent = null;
                 title.setText("");
                 content.setText("");
                 selected.clear();
-                adapter.refresh(selected);
                 break;
             }
             case R.id.release: {
@@ -237,6 +230,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }
     }
+
     // 存为草稿
     private void saveAsDraft() {
         if (selected != null){
@@ -245,6 +239,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss"+selected);
         }
     }
+
     // 发布
     private void release() {
 
@@ -255,7 +250,13 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
 
 
+
+
+
+
+
     }
+
 
     private void postPicture(int n){  Callback callback = new Callback() {
         @Override
@@ -395,6 +396,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }).start();
     }
+
+
     //保存图片分享
     private void savePost(String imageCode){
 
@@ -457,6 +460,23 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }).start();
     }
+
+    /**
+     * 回调
+     */
+
+
+    /**
+     * http响应体的封装协议
+     * @param <T> 泛型
+     */
+
+    /**
+     * 回调
+     */
+
+
+
 
     public static class ResponseBody <T> {
 

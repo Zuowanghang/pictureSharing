@@ -9,6 +9,25 @@ public class UserData {
     private static String appKey = "006d846c73764779a25da7c1c1eae6db";
     private static String pictureId ="-1";
     private  static  String [] imageUrlList = null;
+    private  static  SavePictureBean.Data.Records savePictureData =null;
+
+    public static SavePictureBean.Data.Records getSavePictureData() {
+        return savePictureData;
+    }
+
+    public static void setSavePictureData(SavePictureBean.Data.Records savePictureData) {
+        UserData.savePictureData = savePictureData;
+    }
+
+    private static  String pictureUserName ="";
+
+    public static String getPictureUserName() {
+        return pictureUserName;
+    }
+
+    public static void setPictureUserName(String pictureUserName) {
+        UserData.pictureUserName = pictureUserName;
+    }
 
     public static String[] getImageUrlList() {
         return imageUrlList;

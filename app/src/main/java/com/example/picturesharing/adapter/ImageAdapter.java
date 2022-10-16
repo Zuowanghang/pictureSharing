@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
     private Context mContext;
+    private View adapterView;
     private ArrayList<String> images;
     private LayoutInflater mInflater;
     private boolean isAndroidQ = VersionUtils.isAndroidQ();
@@ -41,18 +42,21 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.layout_image, parent, false);
-
+this.adapterView = view;
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String image = images.get(position);
+        System.out.println("这里是设配器"+image);
         boolean isCutImage = ImageUtil.isCutImage(mContext, image);
         if (isAndroidQ && !isCutImage) {
-            Glide.with(mContext).load(UriUtils.getImageContentUri(mContext, image)).into(holder.imageView);
+            System.out.println("我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里");
+            Glide.with(this.adapterView).load(image).into(holder.imageView);
         } else {
-            Glide.with(mContext).load(image).into(holder.imageView);
+            System.out.println("我在那里我在那里我在那里我在那里我在那里我在那里我在那里我在那里我在那里");
+            Glide.with(this.adapterView).load(image).into(holder.imageView);
         }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {

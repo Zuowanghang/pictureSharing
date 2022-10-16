@@ -52,14 +52,14 @@
                     android:id="@+id/userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/umbrella"
+
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/timeStamp"
+           android:id="@+id/tv_time"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -119,7 +119,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginStart="3dp"
                     android:layout_toRightOf="@+id/itemSupported"
-                    android:text="@string/_666"
+
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 
@@ -127,7 +127,7 @@
                     android:id="@+id/itemFav"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="26dp"
                     android:layout_toRightOf="@+id/supportNum"
                     android:src="@drawable/ic_baseline_favorite_24" />
 
@@ -137,8 +137,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="3dp"
+
                     android:layout_toRightOf="@+id/itemFav"
-                    android:text="@string/_666"
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 
@@ -186,18 +186,19 @@
                 android:paddingEnd="20dp" />
 
             <TextView
+                android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
-                android:text="标题"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:textColor="@color/black" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言"
+                android:id="@+id/tv_content"
+
                 />
 
             <TextView

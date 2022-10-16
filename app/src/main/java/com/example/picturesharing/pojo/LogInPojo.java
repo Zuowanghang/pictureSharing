@@ -36,7 +36,7 @@ public class LogInPojo {
         private String appKey;
         private String avatar;
         private BigInteger createTime;
-        private BigInteger id;
+        private String id;
         private String introduce;
         private BigInteger lastUpdateTime;
         private String password;
@@ -69,11 +69,11 @@ public class LogInPojo {
             this.createTime = createTime;
         }
 
-        public BigInteger getId() {
+        public String getId() {
             return id;
         }
 
-        public void setId(BigInteger id) {
+        public void setId(String id) {
             this.id = id;
         }
 

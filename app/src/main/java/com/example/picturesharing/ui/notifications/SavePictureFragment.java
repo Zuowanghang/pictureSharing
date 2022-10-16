@@ -1,4 +1,4 @@
-package com.example.picturesharing;
+package com.example.picturesharing.ui.notifications;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,23 +14,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
+import com.example.picturesharing.DraftDetailsActivity;
+import com.example.picturesharing.R;
+import com.example.picturesharing.ShareDetails;
 import com.example.picturesharing.databinding.FragmentItemBinding;
 import com.example.picturesharing.placeholder.PlaceholderContent;
+import com.example.picturesharing.pojo.ReleaseContent;
+import com.example.picturesharing.pojo.SavePictureBean;
+import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -43,23 +47,25 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class ItemFragment extends Fragment {
+public class SavePictureFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
+public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
     String appid = UserData.appId;
     String appsecret = UserData.appSecret;
+    private String str;
     private static final String ARG_COLUMN_COUNT = "column-count";
     private OkHttpClient client;
-    private List<PlaceholderContent.Data.Records> list;
+    private List<SavePictureBean.Data.Records> list;
     private View view;
+    private ListFragment listFragment;
     private RecyclerView recyclerView;
     private Gson gson ;
-public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
-    public ItemFragment() {
+    public SavePictureFragment() {
     }
 
     @SuppressWarnings("unused")
-    public static ItemFragment newInstance(String param1) {
-        ItemFragment fragment = new ItemFragment();
+    public static SavePictureFragment newInstance(String param1) {
+        SavePictureFragment fragment = new SavePictureFragment();
         Bundle args = new Bundle();
         args.putString(ARG_COLUMN_COUNT, param1);
         fragment.setArguments(args);
@@ -85,14 +91,6 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
 
         get();
-
-
-//
-
-
-
-
-
         return view;
     }
 
@@ -114,7 +112,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         new Thread(() -> {
             // url路径
             String userid = "0";
-            String url = "http://47.107.52.7:88/member/photo/share?userId="+UserData.getUserid();
+            String url = "http://47.107.52.7:88/member/photo/share/save?userId="+UserData.getUserid();
             // 请求头
             Headers headers = new Headers.Builder()
                     .add("appId", UserData.getAppId())
@@ -146,24 +144,18 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         String jsonData = response.body().string();
                         // 解析json串到自己封装的状态
                         Log.i("ssssssssssssss", "4444444444444444444444444444444444444444444444444444444444444444444444444");
-                        PlaceholderContent data;
-
-                        data = JSON.parseObject(jsonData, PlaceholderContent.class);
-                        if(data.getCode() == 200){
-                            list = data.getData().getRecords();
+                        SavePictureBean data;
+                        data = JSON.parseObject(jsonData, SavePictureBean.class);
+                        list = data.getData().getRecords();
 //                       Log.i("ssssssssssssss",JSON.toJSONString(list));
-                            view.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
-                                    Log.i("ssssssssssssss", JSON.toJSONString(list));
+                        view.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
+                                Log.i("ssssssssssssss", JSON.toJSONString(list));
 
-                                }
-                            });
-
-
-                        }
-
+                            }
+                        });
 
 
                     }
@@ -230,9 +222,9 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         private Boolean LikeBoolean = false;
         private Boolean CollectBoolean = false;
         private Boolean FocusBoolean = false;
-        private final List<PlaceholderContent.Data.Records> mValues;
+        private final List<SavePictureBean.Data.Records> mValues;
 
-        public MyItemRecyclerViewAdapter(List<PlaceholderContent.Data.Records> items) {
+        public MyItemRecyclerViewAdapter(List<SavePictureBean.Data.Records> items) {
             mValues = items;
         }
 
@@ -244,7 +236,10 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mName.setText(holder.mItem.getUsername()                                      );
+            holder.mAccessName.setVisibility(View.GONE);
+            holder.mCollect.setVisibility(View.GONE);
+            holder.mFav.setVisibility(View.GONE);
+            holder.mSubscribe.setVisibility(View.GONE);
             view.post(new Runnable() {
                 @Override
                 public void run() {
@@ -256,11 +251,22 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                     holder.discoverImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                          UserData.setPictureUserName(holder.mItem.getUsername());
-                            UserData.setPictureId( holder.mItem.getId());
-                            UserData.setImageUrlList(holder.mItem.getImageUrlList());
-                            Intent intent = new Intent(getContext(), ShareDetails.class);
-//                          intent.putExtra( MESSAGE_STRING, message);
+
+                            ArrayList<String> images = new ArrayList<>();
+
+                            for (String str : holder.mItem.getImageUrlList()) {
+                                images.add(str);
+                            }
+
+                            final String IMAGES = "images";
+                            final String ARTICLE = "article";
+                            Intent intent = new Intent(getContext(), DraftDetailsActivity.class);
+//                            UserData.setSavePictureData(holder.mItem);
+                            String[] article = new String[] { holder.mItem.getTitle(), holder.mItem.getContent() };
+                            intent.putExtra(ARTICLE, article);
+                            intent.putStringArrayListExtra(IMAGES, images);
+                            //发送单个草稿的内用
+                          //  releaseContent
                           startActivity(intent);
 
                         }
@@ -269,79 +275,10 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                 }
             });
             holder.mTvTitle.setText((holder.mItem.getTitle()));
-            //TODO  点赞关注收藏
-            {  //关注初始化
-                if (holder.mItem.isHasFocus())  {
-                    holder.mSubscribe.setImageResource(R.drawable.subscribed);
-                } else {
-                    holder.mSubscribe.setImageResource(R.drawable.subscribe);
-                }
-                //点赞初始化
-                if(holder.mItem.isHasLike()){
-                    holder.mFav.setImageResource(R.drawable.supported);
-                } else {
-                    holder.mFav.setImageResource(R.drawable.support);
-                }
-                //收藏初始化
-                if(holder.mItem.isHasCollect()){
-                    holder.mCollect.setVisibility(View.GONE);
-                } else {
-                    holder.mCollect.setImageResource(R.drawable.collect);
-                }
-            }
-            //TODO 关注
-            holder.mSubscribe.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (holder.mItem.isHasFocus()) {
-                        //取消关注
-                        goFcous(holder.mItem.getPUserId(),2);
-                        holder.mItem.setHasFocus(!holder.mItem.isHasFocus());
-                        holder.mSubscribe.setImageResource(R.drawable.subscribe);
-                    } else {
-                        //关注
-                        goFcous(holder.mItem.getPUserId(),1);
-                        holder.mItem.setHasFocus(!holder.mItem.isHasFocus());
-                        holder.mSubscribe.setImageResource(R.drawable.subscribed);
-                    }
-//                    GoFcous(holder.mItem.getPUserId(),"1579386336664752128");
-                }
-            });
-            //监听点击事件
-            holder.mCollect.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (holder.mItem.isHasCollect()) {
-                        //取消收藏
-                        holder.mCollect.setVisibility(View.GONE);
+            holder.mItem = mValues.get(position);
 
-                    } else {
-                        //收藏
-                        goFcous(holder.mItem.getId(),3);
 
-                        holder.mCollect.setVisibility(View.GONE);
-                    }
-//                    GoFcous(holder.mItem.getPUserId(),"1579386336664752128");
-                }
-            });
-            holder.mFav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (holder.mItem.isHasLike()) {
-                        //取消点赞
 
-                        holder.mFav.setImageResource(R.drawable.support);
-                        holder.mItem.setHasLike(!holder.mItem.isHasLike());
-                    } else {
-                        //点赞
-                        goFcous(holder.mItem.getId(),4);
-                        holder.mFav.setImageResource(R.drawable.supported);
-                        holder.mItem.setHasLike(!holder.mItem.isHasLike());
-
-                    }
-//                    GoFcous(holder.mItem.getPUserId(),"1579386336664752128");
-                }
-            });
         }
 
         @Override
@@ -357,8 +294,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             public final ImageView mCollect;
             public final ImageView mSubscribe;
             public final ImageView mFav;
-            public final TextView mName;
-            public PlaceholderContent.Data.Records mItem;
+            public SavePictureBean.Data.Records mItem;
 
             public ViewHolder(FragmentItemBinding binding) {
                 super(binding.getRoot());
@@ -370,7 +306,6 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                 mCollect = binding.collect;
                 mSubscribe = binding.subscribe;
                 mFav = binding.support;
-                mName = binding.accessName;
             }
 
         }

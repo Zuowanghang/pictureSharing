@@ -79,13 +79,13 @@ public class HomeFragment extends Fragment {
 
         // New 出一堆 VPFragment 来，然后添加进 List 中
 //        ItemFragment f1 = ItemFragment.newInstance("关注");
-//        ItemFragment f2 = ItemFragment.newInstance("发现");
+        ItemFragment f2 = ItemFragment.newInstance("发现");
 //
 //        mFragmentList.add(f1);
-//        mFragmentList.add(f2);
+        mFragmentList.add(f2);
 //
-//        titleList = new ArrayList<>();
+        titleList = new ArrayList<>();
 //        titleList.add("关注");
-//        titleList.add("发现");
+        titleList.add("发现");
     }
 }

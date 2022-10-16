@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    >
 
     <!-- 账号栏android:background="@drawable/login_bg" -->
     <TextView
@@ -86,34 +87,52 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingStart="20dp"
+        >
+        <CheckBox
+            android:id="@+id/rememberPassword"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            />
+        <TextView
+            android:id="@+id/remember"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rememberPassword"
+            />
+    </LinearLayout>
+
     <!-- 登录按钮 -->
     <RelativeLayout
+        android:id="@+id/signInArea"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
         <Button
             android:id="@+id/signIn"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_margin="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/radius"
             android:text="@string/signIn"
             android:textColor="@android:color/black"
             android:textSize="20sp" />
+
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="150dp"
-        android:orientation="horizontal"
         android:paddingTop="20dp">
         <!-- 忘记 -->
         <TextView
@@ -121,7 +140,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:gravity="left|center"
+            android:layout_alignParentStart="true"
             android:text="@string/forgetPassword"
             android:textColor="@color/currentTheme"
             android:textSize="20sp"
@@ -130,14 +149,15 @@
         <!-- 注册 -->
         <TextView
             android:id="@+id/register"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="65dp"
-            android:gravity="right|center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="40dp"
             android:text="@string/signUp"
             android:textColor="@color/currentTheme"
             android:textSize="20sp"
             tools:ignore="RtlHardcoded" />
-    </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
