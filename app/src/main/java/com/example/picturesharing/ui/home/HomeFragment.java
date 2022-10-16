@@ -1,12 +1,9 @@
 package com.example.picturesharing.ui.home;
 
-import android.content.Intent;
-import android.graphics.Shader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +13,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.picturesharing.ItemFragment;
 import com.example.picturesharing.R;
-import com.example.picturesharing.ShareDetails;
 import com.example.picturesharing.adapter.MyFragmentTitleAdapter;
 import com.example.picturesharing.databinding.FragmentHomeBinding;
 import com.google.android.material.tabs.TabLayout;
@@ -56,14 +52,15 @@ public class HomeFragment extends Fragment {
         mViewPager = view.findViewById(R.id.homeViewPager);
         mTabLayout = view.findViewById(R.id.tabLayout);
 
-        Button button = view.findViewById(R.id.btn);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(requireActivity(), ShareDetails.class);
-                startActivity(i);
-            }
-        });
+        // 测试图片详情页
+//        Button button = view.findViewById(R.id.btn);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(requireActivity(), ShareDetails.class);
+//                startActivity(i);
+//            }
+//        });
 
         // 初始化数据
         initData();
@@ -78,14 +75,14 @@ public class HomeFragment extends Fragment {
         mFragmentList = new ArrayList<>();
 
         // New 出一堆 VPFragment 来，然后添加进 List 中
-//        ItemFragment f1 = ItemFragment.newInstance("关注");
+        ItemFragment f1 = ItemFragment.newInstance("关注");
 //        ItemFragment f2 = ItemFragment.newInstance("发现");
-//
-//        mFragmentList.add(f1);
+
+        mFragmentList.add(f1);
 //        mFragmentList.add(f2);
 //
-//        titleList = new ArrayList<>();
-//        titleList.add("关注");
+        titleList = new ArrayList<>();
+        titleList.add("关注");
 //        titleList.add("发现");
     }
 }

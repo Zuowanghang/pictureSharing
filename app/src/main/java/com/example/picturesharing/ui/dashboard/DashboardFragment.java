@@ -28,12 +28,10 @@ import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
-import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
-import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
-import com.google.gson.Gson;
+import com.example.picturesharing.util.ResponseBody;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
@@ -55,7 +53,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class DashboardFragment extends Fragment implements View.OnClickListener {
-    private Gson gson;
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
     private ArrayList<String> selected;
@@ -69,6 +66,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ImageView imageSelector;
     private ReleaseContent releaseContent;
     private Button release;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         System.out.println("On Create DashBoard");
@@ -125,7 +123,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             title.setText(releaseContent.getTitle());
             content.setText(releaseContent.getContent());
 
-            adapter = new ImageAdapter(getContext());
+            adapter = new ImageAdapter(requireContext());
+            adapter.refresh(selected);
             adapter.setOnImageDeleteListener(this::removeData);
             recyclerView = view.findViewById(R.id.rlv);
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -138,12 +137,16 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private void removeData(int id) {
         selected.remove(id);
         adapter.refresh(selected);
+        // 本意是更新其中数据，但是实际运行过程中报错
+//        releaseContent.setImages(selected);
+        ReleaseContent.savedData = JSON.toJSONString(releaseContent);
     }
 
     /**
      * 处理权限申请的回调函数
-     * @param requestCode 申请码
-     * @param permissions 权限名，可多个
+     *
+     * @param requestCode  申请码
+     * @param permissions  权限名，可多个
      * @param grantResults 授权结果
      */
     @Override
@@ -174,7 +177,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         System.out.println(data);
 
         if (requestCode == REQUEST_CODE && data != null) {
-            if (selected == null ) {
+            if (selected == null) {
                 selected = data.getStringArrayListExtra(ImageSelector.SELECT_RESULT);
             } else {
                 selected.addAll(data.getStringArrayListExtra(ImageSelector.SELECT_RESULT));
@@ -200,6 +203,10 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    public void setSelected(ArrayList<String> selected) {
+        this.selected = selected;
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -214,9 +221,12 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
+                ReleaseContent.savedData = null;
+                releaseContent = null;
                 title.setText("");
                 content.setText("");
                 selected.clear();
+                adapter.refresh(selected);
                 break;
             }
             case R.id.release: {
@@ -239,53 +249,46 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
     // 发布
     private void release() {
-
-        if (selected != null){
+        if (selected != null) {
             postPicture();
-
-            System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss"+selected);
+            System.out.println("我是相册的地址ssssssssssssssssssssssssssssssssssssssss" + selected);
+            releaseContent = null;
+            selected.clear();
+            content.setText("");
+            title.setText("");
+            adapter.refresh(selected);
         }
-
-
-
-
-
-
-
     }
 
-
-    private void postPicture(){  Callback callback = new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, IOException e) {
-            //TODO 请求失败处理
-            e.printStackTrace();
-        }
-        @Override
-        public void onResponse(@NonNull Call call, Response response) throws IOException {
-            //TODO 请求成功处理
-            Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
-            // 获取响应体的json串
-            //
-            String jsonData = response.body().string();
-
-            Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaainfo", jsonData);
-            // 解析json串到自己封装的状态
-            PostImage data;
-            data = JSON.parseObject(jsonData, PostImage.class);
-            post(data.getData().getImageCode());
-            String[] path = data.getData().getImageUrlList();
-
-            for (int i = 0 ; i < data.getData().getImageUrlList().length;i++){
-                System.out.println(path[i]);
-
+    private void postPicture() {
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
             }
 
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
+                // 获取响应体的json串
+                String jsonData = response.body().string();
 
+                Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaainfo", jsonData);
+                // 解析json串到自己封装的状态
+                PostImage data;
+                data = JSON.parseObject(jsonData, PostImage.class);
+                post(data.getData().getImageCode());
+                String[] path = data.getData().getImageUrlList();
 
+                for (int i = 0; i < data.getData().getImageUrlList().length; i++) {
+                    System.out.println(path[i]);
 
-        }
-    };
+                }
+            }
+        };
 
         new Thread(() -> {
             List<String> filePaths = selected;
@@ -305,7 +308,6 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 File tempfile = new File(fname);
                 //根据文件的后缀名，获得文件类型
                 builder.setType(MultipartBody.FORM)
-
                         .addFormDataPart( //给Builder添加上传的文件
                                 "fileList",  //请求的名字
                                 tempfile.getName(), //文件的文字，服务器端用来解析的
@@ -322,12 +324,13 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
-    private void post(String imageCode){
+
+    private void post(String imageCode) {
 
         Callback callback = new Callback() {
             @Override
@@ -335,16 +338,18 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
                 // 获取响应体的json串
                 String body = response.body().string();
                 Log.d("info", body);
                 // 解析json串到自己封装的状态
 
-                ResponseBody<Object> dataResponseBody = JSON.parseObject(body,jsonType);
+                ResponseBody<Object> dataResponseBody = JSON.parseObject(body, jsonType);
                 Log.d("info", dataResponseBody.toString());
             }
         };
@@ -385,55 +390,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
-
-    /**
-     * 回调
-     */
-
-
-
-
-    public static class ResponseBody <T> {
-
-        /**
-         * 业务响应码
-         */
-        private int code;
-        /**
-         * 响应提示信息
-         */
-        private String msg;
-        /**
-         * 响应数据
-         */
-        private T data;
-
-        public ResponseBody(){}
-
-        public int getCode() {
-            return code;
-        }
-        public String getMsg() {
-            return msg;
-        }
-        public T getData() {
-            return data;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "ResponseBody{" +
-                    "code=" + code +
-                    ", msg='" + msg + '\'' +
-                    ", data=" + data +
-                    '}';
-        }
-    }
-
 }

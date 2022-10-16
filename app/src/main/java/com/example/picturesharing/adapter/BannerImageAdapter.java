@@ -3,7 +3,6 @@ package com.example.picturesharing.adapter;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-
 import com.example.picturesharing.placeholder.ImageHolder;
 import com.example.picturesharing.pojo.DataBean;
 import com.youth.banner.adapter.BannerAdapter;

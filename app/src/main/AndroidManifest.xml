@@ -31,13 +31,7 @@
             android:exported="false" /> <!-- 首页活动，首页、发布以及我之间的切换 -->
         <!-- 横竖屏切换处理。 -->
         <!-- 如果要支持横竖屏切换，一定要加上这句，否则在切换横竖屏的时候会发生异常android:configChanges="orientation|keyboardHidden|screenSize"。 -->
-
-        <activity
-            android:name=".ShareDetails"
-            android:exported="false" />
-        <activity
-            android:name=".MySettings"
-            android:exported="false" /> <!-- 首页活动，首页、发布以及我之间的切换 -->
+        <!-- 首页活动，首页、发布以及我之间的切换 -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -97,6 +91,12 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".AboutUs"
+            android:exported="false" />
+        <activity
+            android:name=".ShareDetails"
+            android:exported="false" />
+        <activity
+            android:name=".MySettings"
             android:exported="false" />
     </application>
 

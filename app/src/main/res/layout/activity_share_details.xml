@@ -31,12 +31,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
@@ -70,7 +71,7 @@
 
                 <Button
                     android:layout_width="60dp"
-                    android:layout_height="36dp"
+                    android:layout_height="32dp"
                     android:layout_toLeftOf="@+id/more"
                     android:background="@drawable/add_to_subscribe"
                     android:text="+ 关注"
@@ -82,6 +83,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
+                    android:layout_marginStart="5dp"
                     android:src="@drawable/ic_baseline_more_vert_24" />
             </RelativeLayout>
 
@@ -191,30 +193,62 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:text="标题"
-                android:textStyle="bold"
+                android:textColor="@color/black"
                 android:textSize="20sp"
-                android:textColor="@color/black" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言"
-                />
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="评论"
+                android:text="描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:textSize="18sp"
-                />
+                android:text="评论"
+                android:textSize="18sp" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/gray3" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                tools:listitem="@layout/comments_list_item" />
         </LinearLayout>
-
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingStart="20dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/input_style"
+            android:hint="发表评论…"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/sendComment"
+            android:layout_width="60dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/input_style"
+            android:text="发送"
+            android:textSize="14sp" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
