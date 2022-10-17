@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
-import com.example.picturesharing.HomePage;
-import com.example.picturesharing.R;
 import com.example.picturesharing.pojo.LogInPojo;
 import com.example.picturesharing.pojo.RegisterInfo;
 import com.example.picturesharing.pojo.User;

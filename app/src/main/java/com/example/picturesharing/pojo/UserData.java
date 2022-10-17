@@ -3,6 +3,7 @@ package com.example.picturesharing.pojo;
 public class UserData {
 
 
+    private static String userName = "22222";
     public static String appId = "006d846c73764779a25da7c1c1eae6db";
     public  static String appSecret ="46977249b3cc45fba493aa6d14f99ff77a47e";
     private static String userid = "1579485016243703808";
@@ -11,6 +12,32 @@ public class UserData {
     private  static  String [] imageUrlList = null;
     private  static  SavePictureBean.Data.Records savePictureData =null;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static String getUserName() {
+        return userName;
+    }
+
+    public static void setUserName(String userName) {
+        UserData.userName = userName;
+    }
     public static SavePictureBean.Data.Records getSavePictureData() {
         return savePictureData;
     }

@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
     android:background="@color/white"
     android:padding="8dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginBottom="5dp"
     app:cardCornerRadius="10dp">
 
     <RelativeLayout
@@ -29,21 +30,21 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="@string/item_title"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textColor="@color/black9"
+            android:textSize="14sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvTitle">
+            android:layout_below="@+id/tvTitle"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/access_img"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/profile"
-                app:civ_border_color="#FF000000"
-                app:civ_border_width="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,18 +53,18 @@
                 android:id="@+id/access_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="5dp"
                 android:text="@string/item_name"
-                android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textColor="@color/black9"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/access_img"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/collect"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/collect"
@@ -73,8 +74,8 @@
 
             <ImageView
                 android:id="@+id/subscribe"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/subscribe"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -83,8 +84,8 @@
 
             <ImageView
                 android:id="@+id/support"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/support"
                 app:layout_constraintBottom_toBottomOf="parent"
