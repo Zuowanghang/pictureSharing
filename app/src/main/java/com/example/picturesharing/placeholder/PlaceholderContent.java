@@ -82,10 +82,10 @@ public class PlaceholderContent {
             private String content;
             private String createTime;
             private String [] imageUrlList;
-            private Object likeId;
+            private String  likeId;
             private int likeNum;
             private boolean hasLike;
-            private Object collectId;
+            private String collectId;
             private int collectNum;
             private boolean hasCollect;
             private boolean hasFocus;
@@ -149,11 +149,11 @@ public class PlaceholderContent {
                 this.imageUrlList = imageUrlList;
             }
 
-            public Object getLikeId() {
+            public String getLikeId() {
                 return likeId;
             }
 
-            public void setLikeId(Object likeId) {
+            public void setLikeId(String likeId) {
                 this.likeId = likeId;
             }
 
@@ -173,11 +173,11 @@ public class PlaceholderContent {
                 this.hasLike = hasLike;
             }
 
-            public Object getCollectId() {
+            public String getCollectId() {
                 return collectId;
             }
 
-            public void setCollectId(Object collectId) {
+            public void setCollectId(String collectId) {
                 this.collectId = collectId;
             }
 

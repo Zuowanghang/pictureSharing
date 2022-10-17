@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -155,7 +156,16 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                                     Log.i("ssssssssssssss", JSON.toJSONString(list));
                                 }
                             });
+                        }else {
+                            view.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(requireActivity(), data.getMsg(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                         }
+
                     }
                 });
 

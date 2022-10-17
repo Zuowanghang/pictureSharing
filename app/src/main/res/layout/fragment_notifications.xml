@@ -16,10 +16,10 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="365dp"
+            android:layout_height="335dp"
             android:background="@color/personalData"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|exitUntilCollapsed|enterAlwaysCollapsed">
             <!--    吸顶效果并且使得菜单按钮固定在页面上（小问题：menu会被盖住）    -->
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -43,7 +43,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="ImageContrastCheck" />
 
                     <ImageView
                         android:id="@+id/menu"
@@ -58,7 +59,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+                        tools:ignore="ContentDescription,RtlHardcoded,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -74,6 +75,7 @@
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/personalToolBar">
 
+                <!-- 个人介绍 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
@@ -87,7 +89,9 @@
                         android:layout_height="96dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
-                        android:src="@drawable/profile" />
+                        android:src="@drawable/profile"
+                        app:layout_collapseParallaxMultiplier="0.7"
+                        tools:ignore="ImageContrastCheck" />
 
                     <!-- 姓名等个人信息 -->
                     <LinearLayout
@@ -97,6 +101,7 @@
 
                         <!-- 姓名 -->
                         <TextView
+                            android:id="@+id/userName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/umbrella"
@@ -105,11 +110,12 @@
 
                         <!-- id -->
                         <TextView
+                            android:id="@+id/userId"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:text="@string/id_20201008"
-                            android:textColor="@color/white"
+                            android:textColor="#212121"
                             android:textSize="11sp" />
 
                         <!-- 横向展示性别和等级 -->
@@ -120,10 +126,12 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:id="@+id/btn_sex"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:background="@drawable/edit_button"
-                                android:src="@drawable/male" />
+                                android:src="@drawable/male"
+                                tools:ignore="ContentDescription,ImageContrastCheck" />
 
                             <!--                        <ImageView-->
                             <!--                            android:layout_width="60dp"-->
@@ -141,24 +149,23 @@
                         android:layout_marginTop="10dp"
                         android:background="@drawable/edit_button"
                         android:text="@string/editInfo"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        tools:ignore="TextContrastCheck" />
                 </LinearLayout>
 
-                <!-- 个人介绍 -->
                 <TextView
+                    android:id="@+id/useIntuduce"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     android:text="@string/signature"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="TextContrastCheck" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_height="80dp">
 
                     <LinearLayout
                         android:id="@+id/subscribe"
@@ -184,7 +191,8 @@
                             android:layout_marginTop="5dp"
                             android:gravity="center"
                             android:text="@string/subscribe"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            tools:ignore="TextContrastCheck" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -211,7 +219,8 @@
                             android:layout_marginTop="5dp"
                             android:gravity="center"
                             android:text="@string/fans"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            tools:ignore="TextContrastCheck" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -239,7 +248,8 @@
                             android:layout_marginTop="5dp"
                             android:gravity="center"
                             android:text="@string/fonded"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            tools:ignore="TextContrastCheck" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

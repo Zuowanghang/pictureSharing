@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,12 +16,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.example.picturesharing.BlankFragment;
 import com.example.picturesharing.MySettings;
 import com.example.picturesharing.PersonalInfoModify;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.MyFragmentTitleAdapter;
 import com.example.picturesharing.databinding.FragmentNotificationsBinding;
+import com.example.picturesharing.pojo.UserData;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
@@ -41,14 +44,39 @@ public class NotificationsFragment extends Fragment {
     private CircleImageView topImage;
     private AppBarLayout appBarLayout;
     private NestedScrollView scrollView;
+    private TextView uId;
+    private TextView uName;
+    private TextView uIndu;
+    private ImageView uBtnSex;
+    private  CircleImageView circleImageView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         NotificationsViewModel notificationsViewModel =
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
 
+
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        uBtnSex = root.findViewById(R.id.btn_sex);
+        uName = root.findViewById(R.id.userName);
+        uId = root.findViewById(R.id.userId);
+        uIndu = root.findViewById(R.id.useIntuduce);
+    circleImageView = root.findViewById(R.id.profile_image);
+    try {
+        Glide.with(root).load(UserData.avatar).into(circleImageView);
+    }catch (Exception e){
+        Glide.with(root).load("https://guet-lab.oss-cn-hangzhou.aliyuncs.com/api/2022/10/18/9b2a90e1-6d9b-4c84-abe8-6f6f80f41d6e.jpg").into(circleImageView);
+    }
+        uName.setText(UserData.getUserName());
+        uId.setText(UserData.getUserid());
+        uIndu.setText(UserData.introduce);
+        if(UserData.sex == 0){
+            uBtnSex.setImageResource(R.drawable.female);
+        }else {
+            uBtnSex.setImageResource(R.drawable.male);
+        }
+
 
         topImage = binding.topImage;
         topImage.setVisibility(View.INVISIBLE);
@@ -115,12 +143,12 @@ public class NotificationsFragment extends Fragment {
         fragmentList = new ArrayList<>();
         titleList = new ArrayList<>();
 
-        fragmentList.add(BlankFragment.newInstance("动态", ""));
+        fragmentList.add(MyPostPictureFragment.newInstance("动态"));
         fragmentList.add(CollectFragment.newInstance("收藏"));
         fragmentList.add(HasLikeFragment.newInstance("赞过"));
         fragmentList.add(SavePictureFragment.newInstance("草稿箱"));
 
-        titleList.add("关注");
+        titleList.add("动态");
         titleList.add("收藏");
         titleList.add("赞过");
         titleList.add("草稿箱");

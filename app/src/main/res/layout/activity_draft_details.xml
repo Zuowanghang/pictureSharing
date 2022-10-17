@@ -14,13 +14,34 @@
         android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/backToDraft"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/back"
-            tools:ignore="ContentDescription" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/backToDraft"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/deleteDraft"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/trash_bucket"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </Toolbar>
 
     <ScrollView
@@ -67,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:background="@color/lightlyDarkWhite"
-                app:layout_constraintBottom_toTopOf="@+id/article"
+                app:layout_constraintBottom_toTopOf="@+id/draftArticle"
                 app:layout_constraintTop_toBottomOf="@+id/image" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -89,7 +110,8 @@
                     android:paddingBottom="20dp"
                     android:textSize="25sp"
                     android:theme="@style/MyEditText"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/draft_article_content"
@@ -104,7 +126,8 @@
                     android:paddingBottom="20dp"
                     android:textSize="18sp"
                     android:theme="@style/MyEditText"
-                    app:layout_constraintTop_toBottomOf="@+id/draftArticleTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/draftArticleTitle"
+                    android:inputType="text" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -167,7 +190,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/draft"
+                android:id="@+id/archiveImage"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="10dp"
@@ -179,7 +202,7 @@
                 tools:ignore="ContentDescription" />
 
             <Button
-                android:id="@+id/release"
+                android:id="@+id/releaseBtn"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/radius"
@@ -188,13 +211,13 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cancel"
-                app:layout_constraintStart_toEndOf="@+id/draft"
+                app:layout_constraintEnd_toStartOf="@+id/clearImage"
+                app:layout_constraintStart_toEndOf="@+id/archiveImage"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
             <ImageView
-                android:id="@+id/cancel"
+                android:id="@+id/clearImage"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="10dp"

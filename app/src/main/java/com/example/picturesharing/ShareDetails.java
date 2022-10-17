@@ -1,22 +1,27 @@
 package com.example.picturesharing;
 
-import android.content.ContentProviderOperation;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
+import com.example.picturesharing.adapter.CommentAdapter;
 import com.example.picturesharing.adapter.ImageTitleAdapter;
 import com.example.picturesharing.placeholder.PictureMoreBean;
+import com.example.picturesharing.pojo.Conmment1Bean;
 import com.example.picturesharing.pojo.DataBean;
 import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
@@ -30,13 +35,18 @@ import com.youth.banner.util.BannerUtils;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
@@ -46,7 +56,12 @@ public class ShareDetails extends AppCompatActivity {
     private OkHttpClient client;
     private PictureMoreBean.Data list;
     private TextView textView;
-
+    private ImageView itemSupported;
+    private ImageView itemFav;
+    private ImageView support;
+    private RecyclerView recyclerView;
+    private EditText editText;
+private Button button;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +83,9 @@ public class ShareDetails extends AppCompatActivity {
                 finish();
             }
         });
-
+        button = findViewById(R.id.sendComment);
         banner = findViewById(R.id.banner);
+        editText = findViewById(R.id.Edit_Comment);
         // 设置 Adapter
         banner.setAdapter(new ImageTitleAdapter(DataBean.getTestData3()));
         // 图片轮播指示器
@@ -81,16 +97,19 @@ public class ShareDetails extends AppCompatActivity {
         banner.setIndicatorMargins(new IndicatorConfig.Margins(0, 0,
                 BannerConfig.INDICATOR_MARGIN, (int) BannerUtils.dp2px(12)));
         banner.addBannerLifecycleObserver(this);
+        recyclerView = findViewById(R.id.comment_RecyView);
 
 
 
-
-
-
-get();
-
-
-
+            getPicture();
+            getComment();
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    postComment(editText.getText().toString());
+                    getComment();
+                }
+            });
 
 
 
@@ -100,7 +119,61 @@ get();
 
     }
 
-    private void get(){
+
+    //  获取图片
+    private void getPicture(){
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                // 获取响应体的json串
+                String body = response.body().string();
+                Log.d("获取轮播图图片", body);
+                // 解析json串到自己封装的状态 JSON.parseObject(jsonData, PlaceholderContent.class);
+                PictureMoreBean data;
+                data = JSON.parseObject(body, PictureMoreBean.class);
+
+                if(data.getCode() == 200) {
+                    ShareDetails.this.runOnUiThread(() -> {
+                        textView = findViewById(R.id.tv_content);
+                        textView.setText(data.getData().getContent());
+                        textView = findViewById(R.id.tv_title);
+                        textView.setText(data.getData().getTitle());
+                        textView = findViewById(R.id.userName);
+                        textView.setText(UserData.getPictureUserName());
+                        textView = findViewById(R.id.FavNum);
+                        textView.setText("" + data.getData().getCollectNum());
+                        textView = findViewById(R.id.supportNum);
+                        textView.setText(""+data.getData().getLikeNum());
+
+                        Long timeGetTime = Long.parseLong(data.getData().getCreateTime());//获取事件用户的时间错
+                        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        String time = sdf.format(timeGetTime);//显示正确的信息
+                        textView = findViewById(R.id.tv_time);
+                        textView.setText(time);
+
+
+
+
+//                Log.d("test", timeGetTime +"  现在的时间2-->:" + time2);
+
+
+                    });
+                }
+
+
+
+
+
+            }
+        };
+
         new Thread(() -> {
             System.out.println("sssssssssssssssssssssssssssssssssssssssssssssss"+UserData.getPictureId());
             // url路径
@@ -108,8 +181,134 @@ get();
 
             // 请求头
             Headers headers = new Headers.Builder()
-                    .add("appId", "006d846c73764779a25da7c1c1eae6db")
-                    .add("appSecret", "46977249b3cc45fba493aa6d14f99ff77a47e")
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .get()
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            }catch (NetworkOnMainThreadException ex){
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+//发表品论
+    private void postComment(String comment){
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                // 获取响应体的json串
+                String body = response.body().string();
+                Log.d("发表评论成功", body);
+                // 解析json串到自己封装的状态 JSON.parseObject(jsonData, PlaceholderContent.class);
+
+
+            }
+        };
+
+        new Thread(() -> {
+
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/comment/first";
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("Accept", "application/json, text/plain, */*")
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Content-Type", "application/json")
+                    .build();
+
+            // 请求体
+            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+            Map<String, Object> bodyMap = new HashMap<>();
+            bodyMap.put("shareId", UserData.getPictureId());
+            bodyMap.put("userName", UserData.getUserName());
+            bodyMap.put("userId", UserData.getUserid());
+            bodyMap.put("content", comment);
+            // 将Map转换为字符串类型加入请求体中
+            String body = JSON.toJSONString(bodyMap);
+
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            }catch (NetworkOnMainThreadException ex){
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+//获取评论
+    private void getComment(){
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                // 获取响应体的json串
+                String body = response.body().string();
+
+                Log.d("获取评论", body);
+                // 解析json串到自己封装的状态 JSON.parseObject(jsonData, PlaceholderContent.class);
+                Conmment1Bean data;
+                data = JSON.parseObject(body, Conmment1Bean.class);
+
+                if(data.getCode() == 200) {
+
+                    ShareDetails.this.runOnUiThread(() -> {
+
+                         List<Conmment1Bean.Data.Records> list = data.getData().getRecords();
+                        recyclerView.setAdapter(new CommentAdapter(list,ShareDetails.this));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(ShareDetails.this));
+                        //上面是布局管理器，没有就显示不出来。
+                        System.out.println("出来");
+                    });
+                }
+            }//处理数据
+        };
+        new Thread(() -> {
+
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/comment/first?shareId="+UserData.getPictureId();
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
                     .add("Accept", "application/json, text/plain, */*")
                     .build();
 
@@ -130,59 +329,6 @@ get();
         }).start();
     }
 
-    /**
-     * 回调
-     */
-    private final Callback callback = new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, IOException e) {
-            //TODO 请求失败处理
-            e.printStackTrace();
-        }
-        @Override
-        public void onResponse(@NonNull Call call, Response response) throws IOException {
-            //TODO 请求成功处理
-            Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
-            // 获取响应体的json串
-            String body = response.body().string();
-            Log.d("info", body);
-            // 解析json串到自己封装的状态 JSON.parseObject(jsonData, PlaceholderContent.class);
-            PictureMoreBean data;
-            data = JSON.parseObject(body, PictureMoreBean.class);
-
-
-            ShareDetails.this.runOnUiThread(() -> {
-                textView = findViewById(R.id.tv_content);
-              textView.setText(data.getData().getContent());
-                textView = findViewById(R.id.tv_title);
-                textView.setText(data.getData().getTitle());
-                textView = findViewById(R.id.userName);
-                textView.setText(UserData.getPictureUserName());
-                textView = findViewById(R.id.FavNum);
-                textView.setText("" + data.getData().getCollectNum());
-                textView = findViewById(R.id.supportNum);
-                textView.setText(""+data.getData().getLikeNum());
-                Long timeGetTime = Long.parseLong(data.getData().getCreateTime());
-                Log.d("test", "  当前时间戳2->:"+timeGetTime);
-
-                SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-
-                String time2 = sdf.format(timeGetTime);
-                textView = findViewById(R.id.tv_time);
-                textView.setText(time2);
-//                Log.d("test", timeGetTime +"  现在的时间2-->:" + time2);
-
-
-            });
-
-        }
-    };
-
-    /**
-     * http响应体的封装协议
-     * @param <T> 泛型
-     */
     public static class ResponseBody <T> {
 
         /**

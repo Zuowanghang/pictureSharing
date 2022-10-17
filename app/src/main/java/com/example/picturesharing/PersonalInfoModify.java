@@ -6,12 +6,15 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,13 +22,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.donkingliang.imageselector.utils.ImageSelector;
+import com.example.picturesharing.pojo.LogInPojo;
+import com.example.picturesharing.pojo.PostImage;
+import com.example.picturesharing.pojo.User;
+import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.pojo.UserInfo;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class PersonalInfoModify extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE = 0x00000011;
@@ -35,11 +59,14 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
     private LinearLayout l1;
     private LinearLayout l2;
     private LinearLayout l3;
+
     private final UserInfo info = new UserInfo();
     private Button save;
     private TextView name;
     private TextView sex;
     private TextView introduction;
+    private String path;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +99,7 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
         save.setOnClickListener(this);
 
         name = findViewById(R.id.tv_user);
-        sex= findViewById(R.id.tv_sex);
+        sex = findViewById(R.id.tv_sex);
         introduction = findViewById(R.id.tv_sign);
 
         cancelEditing.setOnClickListener(v -> {
@@ -91,6 +118,8 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
 //            Log.d("ImageSelector", "是否是拍照图片：" + isCameraImage);
                 for (String str : images) {
                     Glide.with(this).load(str).into(this.avatar);
+                    path = str;
+                    System.out.println("进来了" + path);
                     info.setImage(str);
                 }
             }
@@ -101,7 +130,6 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
 
     /**
      * 处理权限申请的回调。
-     *
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, int[] grantResults) {
@@ -148,7 +176,7 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
             }
 
             case R.id.modify_sex: {
-                final String[] items = {"男", "女", "保密"};
+                final String[] items = {"男", "女",};
                 final int[] yourChoice = {-1};
                 AlertDialog.Builder singleChoiceDialog =
                         new AlertDialog.Builder(PersonalInfoModify.this);
@@ -181,9 +209,212 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
             }
             case R.id.save_change: {
                 // 保存资料，在上面已经将页面上的数据都封装到了 UserInfo 对象中
+                System.out.println(path + "外面");
+                if (path == null) {
+                    Toast.makeText(PersonalInfoModify.this, "请选择头像", Toast.LENGTH_SHORT).show();
+                } else {
+                    postPicture(path, name.getText().toString(), sex.getText().toString(), introduction.getText().toString());
+                }
+
 
                 break;
             }
+        }
+    }
+
+
+    private void post(String path, String mName, String mSex, String mIntroduction) {
+
+        new Thread(() -> {
+            int n = 0;
+            switch (mSex) {
+                case "男":
+                    n = 0;
+                    break;
+                case "女":
+                    n = 1;
+                default:
+                    break;
+
+            }
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/user/update";
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+
+            // 请求体
+            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+//            System.out.println("头像地址"+path+"id"+UserData.getUserid()+"个人介绍"+introduction.getText().toString()+"name"+UserData.getUserName());
+            Map<String, Object> bodyMap = new HashMap<>();
+            bodyMap.put("avatar", path);
+            bodyMap.put("id", "" + UserData.getUserid());
+            bodyMap.put("introduce", "" + mIntroduction);
+            bodyMap.put("sex", "" + n);
+            bodyMap.put("username", "" + mName);
+
+            // 将Map转换为字符串类型加入请求体中
+            String body = JSON.toJSONString(bodyMap);
+            System.out.println(body);
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * 回调
+     */
+    private final Callback callback = new Callback() {
+        @Override
+        public void onFailure(@NonNull Call call, IOException e) {
+            //TODO 请求失败处理
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onResponse(@NonNull Call call, Response response) throws IOException {
+            //TODO 请求成功处理
+
+            // 获取响应体的json串
+            String body = response.body().string();
+            Log.d("info", body);
+
+        }
+
+
+    };
+
+
+    private void postPicture(String path, String mName, String mSex, String mIntroduction) {
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+
+                // 获取响应体的json串
+                //
+                String jsonData = response.body().string();
+                Log.d("图片标题内容", jsonData);
+                // 解析json串到自己封装的状态
+                PostImage data;
+                data = JSON.parseObject(jsonData, PostImage.class);
+
+                if (data.getCode() == 200) {
+                    String url[] = data.getData().getImageUrlList();
+                    post(url[0], mName, mSex, mIntroduction);
+                }
+                //上传图片分享，包括内容
+
+            }
+        };
+
+        new Thread(() -> {
+
+
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/image/upload";
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+
+            MediaType mediaType = MediaType.parse("multipart/form-data");//设置类型，类型为八位字节流
+            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            //对文件进行遍历
+            System.out.println(path + "里面");
+            String fname = path;
+            File tempfile = new File(fname);
+            //根据文件的后缀名，获得文件类型
+            builder.setType(MultipartBody.FORM)
+
+                    .addFormDataPart( //给Builder添加上传的文件
+                            "fileList",  //请求的名字
+                            tempfile.getName(), //文件的文字，服务器端用来解析的
+                            RequestBody.create(MediaType.parse("multipart/form-data"), tempfile)//创建RequestBody，把上传的文件放入
+                    );
+
+            MultipartBody requestBody = builder.build();
+            Request request = new Request.Builder()
+                    .headers(headers)
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+
+    public static class ResponseBody<T> {
+
+        /**
+         * 业务响应码
+         */
+        private int code;
+        /**
+         * 响应提示信息
+         */
+        private String msg;
+        /**
+         * 响应数据
+         */
+        private T data;
+
+        public ResponseBody() {
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "ResponseBody{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    ", data=" + data +
+                    '}';
         }
     }
 }

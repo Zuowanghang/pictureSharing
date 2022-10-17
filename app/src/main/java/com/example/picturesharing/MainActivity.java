@@ -199,19 +199,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             break;
                         }
                         case "登录成功": {
+                            Intent i = new Intent(MainActivity.this, HomePage.class);
+                            startActivity(i);
                             if(checkBox.isChecked()){
+
                                 sp.edit().putString("userName",name).apply();//写入用户
                                 sp.edit().putInt("start",1).apply();
                                 sp.edit().putString("userPwd",pwd).apply();
                             }else {
                                 sp.edit().putInt("start",0).apply();
                             }
-
+                            UserData.avatar = info.getData().getAvatar();
+                            UserData.introduce = info.getData().getIntroduce();
+                            UserData.sex = info.getData().getSex();
+                            UserData.setUserName(info.getData().getUsername());
                             UserData.setUserid(info.getData().getId());
                             UserData.setAppKey(info.getData().getAppKey());
 
-                            Intent i = new Intent(MainActivity.this, HomePage.class);
-                            startActivity(i);
                             break;
                         }
                         default:

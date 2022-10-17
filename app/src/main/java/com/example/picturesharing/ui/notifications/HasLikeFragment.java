@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -142,16 +143,28 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         Log.i("ssssssssssssss", "4444444444444444444444444444444444444444444444444444444444444444444444444");
                         PlaceholderContent data;
                         data = JSON.parseObject(jsonData, PlaceholderContent.class);
-                        list = data.getData().getRecords();
+                        if(data.getData() != null && data.getCode() == 200){
+                            list = data.getData().getRecords();
 //                       Log.i("ssssssssssssss",JSON.toJSONString(list));
-                        view.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
-                                Log.i("ssssssssssssss", JSON.toJSONString(list));
+                            view.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
+                                    Log.i("ssssssssssssss", JSON.toJSONString(list));
 
-                            }
-                        });
+                                }
+                            });
+                        }else {
+                            view.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(requireActivity(), data.getMsg(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+
+
 
 
                     }
@@ -264,29 +277,8 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             holder.mItem = mValues.get(position);
 
 
-            //TODO  点赞关注收藏
-//            {  //关注初始化
-//                if (!holder.mItem.isHasFocus())  {
-//                    holder.mSubscribe.setImageResource(R.drawable.subscribed);
-//                } else {
-//                    holder.mSubscribe.setImageResource(R.drawable.subscribe);
-//                }
-//                //点赞初始化
-//                if(!holder.mItem.isHasLike()){
-//                    holder.mFav.setImageResource(R.drawable.supported);
-//                } else {
-//                    holder.mFav.setImageResource(R.drawable.support);
-//                }
-//                //收藏初始化
-//
-//                if(!holder.mItem.isHasCollect()){
-//                    holder.mCollect.setVisibility(View.GONE);
-//                } else {
-//                    holder.mCollect.setImageResource(R.drawable.collect);
-//                }
-//            }
-            //TODO 关注
 
+            //TODO 关注
             //监听点击事件
         }
 
@@ -320,59 +312,5 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         }
     }
     //TODO 取消和关注接口
-    private void goFcous(String key,int str) {
 
-        new Thread(() -> {
-            String url = null;
-            switch (str) {
-                case 1 :  url = "http://47.107.52.7:88/member/photo/focus?focusUserId="+ key+"&userId="+UserData.getUserid();
-                    Log.d("关注", url);
-                    break;
-                case 2 : url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId="+ key+"&userId="+ UserData.getUserid();
-                    Log.d("取消关注", url);
-
-                    break;
-                case 3 :  url = "http://47.107.52.7:88/member/photo/collect?shareId="+key+"&userId="+UserData.getUserid();
-                    Log.d("收藏", url);
-                    break;
-                case 4 :  url = "http://47.107.52.7:88/member/photo/like?shareId=" + key+ "&userId="+UserData.getUserid();
-                    Log.d("点赞", url);
-
-                    break;
-                default:
-            }
-
-            // 请求头
-            Headers headers = new Headers.Builder()
-                    .add("appId",appid)
-                    .add("appSecret", appsecret)
-                    .add("Accept", "application/json, text/plain, */*")
-                    .build();
-            //请求组合创建
-            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-            Request request = new Request.Builder()
-                    .url(url)
-                    // 将请求头加至请求中
-                    .headers(headers)
-                    .post(RequestBody.create(MEDIA_TYPE_JSON, ""))
-                    .build();
-            try {
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, IOException e) {
-
-                        e.printStackTrace();
-                    }
-                    @Override
-                    public void onResponse(@NonNull Call call, Response response) throws IOException {
-
-                    }
-                });
-
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-
-            }
-        }).start();
-    }
 }

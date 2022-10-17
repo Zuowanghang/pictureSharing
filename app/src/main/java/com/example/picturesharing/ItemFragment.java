@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,11 +22,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.example.picturesharing.databinding.FragmentItemBinding;
+import com.example.picturesharing.placeholder.PictureMoreBean;
 import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.UserData;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +48,8 @@ import okhttp3.Response;
 
 
 public class ItemFragment extends Fragment {
+    private String mLikeId;
+    private String mCollectId;
     private SwipeRefreshLayout swipeRefreshLayout;
     String appid = UserData.appId;
     String appsecret = UserData.appSecret;
@@ -52,8 +58,10 @@ public class ItemFragment extends Fragment {
     private List<PlaceholderContent.Data.Records> list;
     private View view;
     private RecyclerView recyclerView;
-    private Gson gson ;
-public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
+    private Gson gson;
+    public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
+    private static int current = 0;
+
     public ItemFragment() {
     }
 
@@ -90,9 +98,6 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 //
 
 
-
-
-
         return view;
     }
 
@@ -114,7 +119,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         new Thread(() -> {
             // url路径
             String userid = "0";
-            String url = "http://47.107.52.7:88/member/photo/share?userId="+UserData.getUserid();
+            String url = "http://47.107.52.7:88/member/photo/share?current=1&size=40&userId=0" + UserData.getUserid();
             // 请求头
             Headers headers = new Headers.Builder()
                     .add("appId", UserData.getAppId())
@@ -139,6 +144,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         //TODO 请求失败处理
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
                         //TODO 请求成功处理
@@ -149,7 +155,8 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         PlaceholderContent data;
 
                         data = JSON.parseObject(jsonData, PlaceholderContent.class);
-                        if(data.getCode() == 200){
+// TODO 判断获取数据成功不成功
+                        if (data.getCode() == 200) {
                             list = data.getData().getRecords();
 //                       Log.i("ssssssssssssss",JSON.toJSONString(list));
                             view.post(new Runnable() {
@@ -160,10 +167,15 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
                                 }
                             });
-
+                        } else {
+                            view.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(requireActivity(), data.getMsg(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                         }
-
 
 
                     }
@@ -186,9 +198,6 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
      */
     public static class ResponseBody<T> {
 
-        /**
-         * 业务响应码
-         */
         private int code;
         /**
          * 响应提示信息
@@ -244,7 +253,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mName.setText(holder.mItem.getUsername()                                      );
+            holder.mName.setText(holder.mItem.getUsername());
             view.post(new Runnable() {
                 @Override
                 public void run() {
@@ -256,12 +265,12 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                     holder.discoverImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                          UserData.setPictureUserName(holder.mItem.getUsername());
-                            UserData.setPictureId( holder.mItem.getId());
+                            UserData.setPictureUserName(holder.mItem.getUsername());
+                            UserData.setPictureId(holder.mItem.getId());
                             UserData.setImageUrlList(holder.mItem.getImageUrlList());
                             Intent intent = new Intent(getContext(), ShareDetails.class);
 //                          intent.putExtra( MESSAGE_STRING, message);
-                          startActivity(intent);
+                            startActivity(intent);
 
                         }
                     });
@@ -270,58 +279,61 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             });
             holder.mTvTitle.setText((holder.mItem.getTitle()));
             //TODO  点赞关注收藏
-            {  //关注初始化
-                if (holder.mItem.isHasFocus())  {
+          //关注初始化
+                if (holder.mItem.isHasFocus()) {
                     holder.mSubscribe.setImageResource(R.drawable.subscribed);
                 } else {
                     holder.mSubscribe.setImageResource(R.drawable.subscribe);
                 }
                 //点赞初始化
-                if(holder.mItem.isHasLike()){
+                if (holder.mItem.isHasLike()) {
                     holder.mFav.setImageResource(R.drawable.supported);
                 } else {
                     holder.mFav.setImageResource(R.drawable.support);
                 }
                 //收藏初始化
-                if(holder.mItem.isHasCollect()){
-                    holder.mCollect.setVisibility(View.GONE);
+                if (holder.mItem.isHasCollect()) {
+                    holder.mCollect.setImageResource(R.drawable.collected);
                 } else {
                     holder.mCollect.setImageResource(R.drawable.collect);
                 }
-            }
+
             //TODO 关注
             holder.mSubscribe.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (holder.mItem.isHasFocus()) {
                         //取消关注
-                        goFcous(holder.mItem.getPUserId(),2);
+                        goFcous(holder.mItem.getPUserId(), 2);
                         holder.mItem.setHasFocus(!holder.mItem.isHasFocus());
                         holder.mSubscribe.setImageResource(R.drawable.subscribe);
                     } else {
                         //关注
-                        goFcous(holder.mItem.getPUserId(),1);
+                        goFcous(holder.mItem.getPUserId(), 1);
                         holder.mItem.setHasFocus(!holder.mItem.isHasFocus());
                         holder.mSubscribe.setImageResource(R.drawable.subscribed);
                     }
 //                    GoFcous(holder.mItem.getPUserId(),"1579386336664752128");
                 }
             });
-            //监听点击事件
+//TODO 收藏事件
             holder.mCollect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (holder.mItem.isHasCollect()) {
+
+                        System.out.println("这里是取消收藏");
+                        getPicture(holder.mItem.getId(),2);
                         //取消收藏
-                        holder.mCollect.setVisibility(View.GONE);
+                        holder.mCollect.setImageResource(R.drawable.collect);
+                        holder.mItem.setHasCollect(!holder.mItem.isHasCollect());
 
                     } else {
                         //收藏
-                        goFcous(holder.mItem.getId(),3);
-
-                        holder.mCollect.setVisibility(View.GONE);
+                        goFcous(holder.mItem.getId(), 3);
+                        holder.mCollect.setImageResource(R.drawable.collected);
+                        holder.mItem.setHasCollect(!holder.mItem.isHasCollect());
                     }
-//                    GoFcous(holder.mItem.getPUserId(),"1579386336664752128");
                 }
             });
             holder.mFav.setOnClickListener(new View.OnClickListener() {
@@ -329,12 +341,16 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                 public void onClick(View view) {
                     if (holder.mItem.isHasLike()) {
                         //取消点赞
+                         System.out.println("这里是取消点赞");
+
+                        getPicture(holder.mItem.getId(),1);
 
                         holder.mFav.setImageResource(R.drawable.support);
                         holder.mItem.setHasLike(!holder.mItem.isHasLike());
                     } else {
                         //点赞
-                        goFcous(holder.mItem.getId(),4);
+
+                        goFcous(holder.mItem.getId(), 4);
                         holder.mFav.setImageResource(R.drawable.supported);
                         holder.mItem.setHasLike(!holder.mItem.isHasLike());
 
@@ -375,33 +391,48 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
         }
     }
-    //TODO 取消和关注接口
-    private void goFcous(String key,int str) {
 
+    //TODO 取消和关注接口
+    private void goFcous(String key, int str) {
         new Thread(() -> {
             String url = null;
             switch (str) {
-                case 1 :  url = "http://47.107.52.7:88/member/photo/focus?focusUserId="+ key+"&userId="+UserData.getUserid();
+                case 1:
+                    url = "http://47.107.52.7:88/member/photo/focus?focusUserId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("关注", url);
                     break;
-                case 2 : url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId="+ key+"&userId="+ UserData.getUserid();
+                case 2:
+                    url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("取消关注", url);
 
                     break;
-                case 3 :  url = "http://47.107.52.7:88/member/photo/collect?shareId="+key+"&userId="+UserData.getUserid();
+                case 3:
+                    url = "http://47.107.52.7:88/member/photo/collect?shareId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("收藏", url);
                     break;
-                case 4 :  url = "http://47.107.52.7:88/member/photo/like?shareId=" + key+ "&userId="+UserData.getUserid();
+                case 4:
+                    url = "http://47.107.52.7:88/member/photo/like?shareId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("点赞", url);
 
                     break;
+                case 5:
+                    url = "http://47.107.52.7:88/member/photo/like/cancel?likeId=" + key ;
+                    Log.d("取消点赞", url);
+
+                    break;
+                case 6:
+                    url = "http://47.107.52.7:88/member/photo/collect/cancel?collectId=" + key ;
+                    Log.d("取消收藏", url);
+
+                    break;
+
                 default:
             }
 
             // 请求头
             Headers headers = new Headers.Builder()
-                    .add("appId",appid)
-                    .add("appSecret", appsecret)
+                    .add("appId", UserData.appId)
+                    .add("appSecret",UserData.appSecret)
                     .add("Accept", "application/json, text/plain, */*")
                     .build();
             //请求组合创建
@@ -419,6 +450,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
 
@@ -431,4 +463,65 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             }
         }).start();
     }
+
+
+    private void getPicture(String shareId,int i){
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                // 获取响应体的json串
+                String body = response.body().string();
+                PictureMoreBean data;
+                data = JSON.parseObject(body, PictureMoreBean.class);
+                switch (i){
+                    case 1:      goFcous(data.getData().getLikeId(), 5);
+                    //取消点赞
+                        break;
+                    case 2:   goFcous(data.getData().getCollectId(), 6);
+                    //取消收藏
+                    break;
+                    default:break;
+                }
+
+
+                Log.d("点赞人数",""+ data.getData().getLikeNum());
+            }
+        };
+
+        new Thread(() -> {
+
+            String url = "http://47.107.52.7:88/member/photo/share/detail?shareId="+shareId+"&userId="+UserData.getUserid();
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .get()
+                    .build();
+            try {
+
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            }catch (NetworkOnMainThreadException ex){
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+
 }

@@ -31,6 +31,7 @@ import com.example.picturesharing.databinding.FragmentDashboardBinding;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
+import com.example.picturesharing.util.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -68,6 +69,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ReleaseContent releaseContent;
     private Button release;
     private String imageCode;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         System.out.println("On Create DashBoard");
@@ -112,6 +114,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         return root;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         System.out.println("On View Created");
@@ -163,12 +166,14 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             }
         }
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println(ReleaseContent.savedData);
         releaseContent = JSON.parseObject(ReleaseContent.savedData, ReleaseContent.class);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -200,9 +205,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             System.out.println(data);
         }
     }
-    public void setSelected(ArrayList<String> selected) {
-        this.selected = selected;
-    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -217,80 +220,87 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
-                ReleaseContent.savedData = null;
-                releaseContent = null;
-                title.setText("");
-                content.setText("");
-                selected.clear();
-                adapter.refresh(selected);
+                clearData();
                 break;
             }
             case R.id.release: {
                 release();
+                clearData();
                 ReleaseContent.savedData = null;
                 break;
             }
             case R.id.draft: {
                 saveAsDraft();
+                clearData();
                 ReleaseContent.savedData = null;
                 break;
             }
         }
     }
+
+
+    private void clearData() {
+        ReleaseContent.savedData = null;
+        releaseContent = null;
+        title.setText("");
+        content.setText("");
+        selected.clear();
+        adapter.refresh(selected);
+    }
+
     // 存为草稿
     private void saveAsDraft() {
-        if (selected != null){
-            postPicture(1);
+        if (selected != null) {
+            System.out.println("保存点击事件");
+            System.out.println(title.getText().toString());
+            postPicture(1,title.getText().toString(),content.getText().toString());
 
-            System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss"+selected);
         }
     }
+
     // 发布
     private void release() {
+//        System.out.println("发布点击事件");
+//        System.out.println(title.getText().toString());
+        if (selected != null) {
+            postPicture(0,title.getText().toString(),content.getText().toString());
 
-        if (selected != null){
-            postPicture(0);
-
-            System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss"+selected);
+            System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss" + selected);
         }
 
 
     }
 
-    private void postPicture(int n){  Callback callback = new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, IOException e) {
-            //TODO 请求失败处理
-            e.printStackTrace();
-        }
-        @Override
-        public void onResponse(@NonNull Call call, Response response) throws IOException {
-            //TODO 请求成功处理
-            Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
-            // 获取响应体的json串
-            //
-            String jsonData = response.body().string();
 
-            Log.d("上传图片除", jsonData);
-            // 解析json串到自己封装的状态
-            PostImage data;
-            data = JSON.parseObject(jsonData, PostImage.class);
-            //上传图片分享，包括内容
 
-            if(n == 0){
-                post(data.getData().getImageCode());
+        //n==0，直接发布图片到动态；
+    //n == 1 ,保存到草稿相
+    private void postPicture(int n,String title, String content) {
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
             }
-            else {
-                savePost(data.getData().getImageCode());
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+
+                // 获取响应体的json串
+                //
+                String jsonData = response.body().string();
+                Log.d("图片标题内容", jsonData);
+                // 解析json串到自己封装的状态
+                PostImage data;
+                data = JSON.parseObject(jsonData, PostImage.class);
+                //上传图片分享，包括内容
+                if (n == 0) {
+                    post(data.getData().getImageCode(),title,content);
+                } else {
+                    savePost(data.getData().getImageCode(),title,content);
+                }
             }
-
-
-//            String[] path = data.getData().getImageUrlList();
-//            for (int i = 0 ; i < data.getData().getImageUrlList().length;i++){
-//                System.out.println(path[i]);
-//            }
-        }
-    };
+        };
 
         new Thread(() -> {
             List<String> filePaths = selected;
@@ -327,12 +337,14 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
-    private void post(String imageCode){
+
+    //上传图片获取图片的imageCode
+    private void post(String imageCode ,String title, String content) {
 
         Callback callback = new Callback() {
             @Override
@@ -340,17 +352,19 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
                 // 获取响应体的json串
                 String body = response.body().string();
-                Log.d("info", body);
+                Log.d("图片上传", body);
                 // 解析json串到自己封装的状态
 
-                ResponseBody<Object> dataResponseBody = JSON.parseObject(body,jsonType);
-                Log.d("info", dataResponseBody.toString());
+                ResponseBody<Object> dataResponseBody = JSON.parseObject(body, jsonType);
+                Log.d("图片上传", dataResponseBody.toString());
             }
         };
 
@@ -370,10 +384,11 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             // 请求体
             // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
             Map<String, Object> bodyMap = new HashMap<>();
+            System.out.println("请求里面是否成功"+title+content);
             bodyMap.put("imageCode", imageCode);
             bodyMap.put("pUserId", UserData.getUserid());
-            bodyMap.put("title", title.getText());
-            bodyMap.put("content", content.getText());
+            bodyMap.put("title", title);
+            bodyMap.put("content", content);
             // 将Map转换为字符串类型加入请求体中
             String body = JSON.toJSONString(bodyMap);
             Log.i("ttttttttttttttttttttttttttttttttttttttttttttttttttttt", body);
@@ -390,13 +405,14 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
+
     //保存图片分享
-    private void savePost(String imageCode){
+    private void savePost(String imageCode,String title, String content) {
 
         Callback callback = new Callback() {
             @Override
@@ -404,17 +420,19 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
                 // 获取响应体的json串
 
                 String body = response.body().string();
-                Log.d("保存图片分享成功", body);
+                Log.d("保存的草稿内容", body);
                 // 解析json串到自己封装的状态
-                ResponseBody<Object> dataResponseBody = JSON.parseObject(body,jsonType);
-                Log.d("保存图片分享成功", dataResponseBody.toString());
+
+
             }
         };
 
@@ -433,10 +451,10 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             // 请求体
             // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
             Map<String, Object> bodyMap = new HashMap<>();
-            bodyMap.put("content", content.getText());
+            bodyMap.put("content", content);
             bodyMap.put("imageCode", imageCode);
             bodyMap.put("pUserId", UserData.getUserid());
-            bodyMap.put("title", title.getText());
+            bodyMap.put("title", title);
             // 将Map转换为字符串类型加入请求体中
             String body = JSON.toJSONString(bodyMap);
             MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
@@ -452,48 +470,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
-
-    public static class ResponseBody <T> {
-
-        /**
-         * 业务响应码
-         */
-        private int code;
-        /**
-         * 响应提示信息
-         */
-        private String msg;
-        /**
-         * 响应数据
-         */
-        private T data;
-
-        public ResponseBody(){}
-
-        public int getCode() {
-            return code;
-        }
-        public String getMsg() {
-            return msg;
-        }
-        public T getData() {
-            return data;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "ResponseBody{" +
-                    "code=" + code +
-                    ", msg='" + msg + '\'' +
-                    ", data=" + data +
-                    '}';
-        }
-    }
-
 }

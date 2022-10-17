@@ -40,7 +40,7 @@ public class PictureMoreBean {
         private String id;
         private String imageCode;
         private String[] imageUrlList;
-        private int likeId;
+        private String likeId;
         private int likeNum;
         private String pUserId;
         private String title;
@@ -131,11 +131,11 @@ public class PictureMoreBean {
             this.imageUrlList = imageUrlList;
         }
 
-        public int getLikeId() {
+        public String getLikeId() {
             return likeId;
         }
 
-        public void setLikeId(int likeId) {
+        public void setLikeId(String likeId) {
             this.likeId = likeId;
         }
 

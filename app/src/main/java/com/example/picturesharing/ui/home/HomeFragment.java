@@ -56,14 +56,14 @@ public class HomeFragment extends Fragment {
         mViewPager = view.findViewById(R.id.homeViewPager);
         mTabLayout = view.findViewById(R.id.tabLayout);
 
-        Button button = view.findViewById(R.id.btn);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(requireActivity(), ShareDetails.class);
-                startActivity(i);
-            }
-        });
+//        Button button = view.findViewById(R.id.btn);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(requireActivity(), ShareDetails.class);
+//                startActivity(i);
+//            }
+//        });
 
         // 初始化数据
         initData();
