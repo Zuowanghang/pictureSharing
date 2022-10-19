@@ -2,8 +2,6 @@ package com.example.picturesharing.ui.dashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.R;
@@ -35,8 +32,7 @@ import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.util.ResponseBody;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
@@ -47,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -71,8 +66,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ImageView cancel;
     private ImageView imageSelector;
     private ReleaseContent releaseContent;
-    private Button release;
-    private String imageCode;
+    //    private Button release;
+    private FloatingActionButton releaseBtn;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -95,8 +90,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         cancel = root.findViewById(R.id.cancel);
         cancel.setOnClickListener(this);
 
-        release = binding.release;
-        release.setOnClickListener(this);
+        releaseBtn = binding.fab;
+        releaseBtn.setOnClickListener(this);
 
         adapter = new ImageAdapter(getContext());
         adapter.setOnImageDeleteListener(this::removeData);
@@ -146,7 +141,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         adapter.refresh(selected);
         // 本意是更新其中数据，但是实际运行过程中报错
 //        releaseContent.setImages(selected);
-        ReleaseContent.savedData = JSON.toJSONString(releaseContent);
+        ReleaseContent.savedData = "";
     }
 
     /**
@@ -197,7 +192,6 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             adapter.setOnImageDeleteListener(this::removeData);
             recyclerView.setAdapter(adapter);
 
-
             // 将现有数据存入savedData
             ReleaseContent info = new ReleaseContent();
             info.setImages(selected);
@@ -229,10 +223,10 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
-
+                clearData();
                 break;
             }
-            case R.id.release: {
+            case R.id.fab: {
                 release();
                 clearData();
                 break;
@@ -245,6 +239,18 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        ReleaseContent info = new ReleaseContent();
+        info.setImages(selected);
+        info.setTitle(title.getText().toString());
+        info.setContent(content.getText().toString());
+        ReleaseContent.savedData = JSON.toJSONString(info);
+        System.out.println(JSON.toJSONString(info));
+        System.out.println("On Pause");
+    }
+
     // 清空内容
     private void clearData() {
         ReleaseContent.savedData = null;
@@ -253,7 +259,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         content.setText("");
         try {
             selected.clear();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -263,7 +269,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         if (selected != null) {
             System.out.println("保存点击事件");
             System.out.println(title.getText().toString());
-            postPicture(1,title.getText().toString(),content.getText().toString());
+            postPicture(1, title.getText().toString(), content.getText().toString());
 
         }
         adapter.refresh(selected);
@@ -274,25 +280,23 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 //        System.out.println("发布点击事件");
 //        System.out.println(title.getText().toString());
         if (selected != null) {
-            postPicture(0,title.getText().toString(),content.getText().toString());
+            postPicture(0, title.getText().toString(), content.getText().toString());
 
             System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss" + selected);
         }
-
-
     }
 
 
-
-        //n==0，直接发布图片到动态；
+    //n==0，直接发布图片到动态；
     //n == 1 ,保存到草稿相
-    private void postPicture(int n,String title, String content) {
+    private void postPicture(int n, String title, String content) {
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
@@ -306,9 +310,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 data = JSON.parseObject(jsonData, PostImage.class);
                 //上传图片分享，包括内容
                 if (n == 0) {
-                    post(data.getData().getImageCode(),title,content);
+                    post(data.getData().getImageCode(), title, content);
                 } else {
-                    savePost(data.getData().getImageCode(),title,content);
+                    savePost(data.getData().getImageCode(), title, content);
                 }
             }
         };
@@ -355,7 +359,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
     //上传图片获取图片的imageCode
-    private void post(String imageCode ,String title, String content) {
+    private void post(String imageCode, String title, String content) {
 
         Callback callback = new Callback() {
             @Override
@@ -395,7 +399,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             // 请求体
             // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
             Map<String, Object> bodyMap = new HashMap<>();
-            System.out.println("请求里面是否成功"+title+content);
+            System.out.println("请求里面是否成功" + title + content);
             bodyMap.put("imageCode", imageCode);
             bodyMap.put("pUserId", UserData.getUserid());
             bodyMap.put("title", title);
@@ -423,7 +427,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
     //保存图片分享
-    private void savePost(String imageCode,String title, String content) {
+    private void savePost(String imageCode, String title, String content) {
 
         Callback callback = new Callback() {
             @Override

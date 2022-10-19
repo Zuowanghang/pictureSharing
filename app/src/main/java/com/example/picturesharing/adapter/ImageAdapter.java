@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.donkingliang.imageselector.utils.ImageUtil;
-import com.donkingliang.imageselector.utils.UriUtils;
 import com.donkingliang.imageselector.utils.VersionUtils;
 import com.example.picturesharing.R;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
@@ -20,11 +19,11 @@ import com.example.picturesharing.databinding.FragmentDashboardBinding;
 import java.util.ArrayList;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-    private Context mContext;
+    private final Context mContext;
     private View adapterView;
     private ArrayList<String> images;
-    private LayoutInflater mInflater;
-    private boolean isAndroidQ = VersionUtils.isAndroidQ();
+    private final LayoutInflater mInflater;
+    private final boolean isAndroidQ = VersionUtils.isAndroidQ();
     private OnImageListener listener = null;
 
     private FragmentDashboardBinding binding;
@@ -98,7 +97,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     }
 
     public interface OnImageListener {
-        public void onDelete(int id);
+        void onDelete(int id);
     }
 
     public void setOnImageDeleteListener(OnImageListener listener) {
