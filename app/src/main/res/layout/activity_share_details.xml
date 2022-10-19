@@ -71,12 +71,12 @@
                 android:layout_gravity="center">
 
                 <Button
-                    android:id="@+id/support"
+                    android:id="@+id/support2"
                     android:layout_width="60dp"
                     android:layout_height="32dp"
                     android:layout_toLeftOf="@+id/more"
                     android:background="@drawable/add_to_subscribe"
-                    android:text="+ 关注"
+                    android:text=""
                     android:textColor="@color/personalData"
                     android:textSize="12sp" />
 

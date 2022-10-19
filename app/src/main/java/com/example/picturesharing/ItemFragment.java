@@ -151,11 +151,12 @@ public class ItemFragment extends Fragment {
                         // 获取响应体的json串
                         String jsonData = response.body().string();
                         // 解析json串到自己封装的状态
-                        Log.i("ssssssssssssss", "4444444444444444444444444444444444444444444444444444444444444444444444444");
+                        Log.i("发现页", jsonData);
                         PlaceholderContent data;
 
                         data = JSON.parseObject(jsonData, PlaceholderContent.class);
 // TODO 判断获取数据成功不成功
+                        System.out.println("发现页"+data.getCode());
                         if (data.getCode() == 200) {
                             list = data.getData().getRecords();
 //                       Log.i("ssssssssssssss",JSON.toJSONString(list));
@@ -262,7 +263,8 @@ public class ItemFragment extends Fragment {
                     } catch (Exception e) {
                         Glide.with(view).load("https://flashlight.nitecore.cn/Uploads/Album/20181112/original_img/201811121046183873.png").into(holder.discoverImage);
                     }
-                    holder.discoverImage.setOnClickListener(new View.OnClickListener() {
+ //TODO 图片点击事件
+                     holder.discoverImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             UserData.setPictureUserName(holder.mItem.getUsername());
@@ -297,8 +299,7 @@ public class ItemFragment extends Fragment {
                 } else {
                     holder.mCollect.setImageResource(R.drawable.collect);
                 }
-
-            //TODO 关注
+//TODO 实现关注和取消关注
             holder.mSubscribe.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -336,6 +337,7 @@ public class ItemFragment extends Fragment {
                     }
                 }
             });
+ //TODO 实现点赞和取消点赞
             holder.mFav.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -464,7 +466,7 @@ public class ItemFragment extends Fragment {
         }).start();
     }
 
-
+// getPicture(String shareId,int i) 获取图片详情页面
     private void getPicture(String shareId,int i){
         Callback callback = new Callback() {
             @Override

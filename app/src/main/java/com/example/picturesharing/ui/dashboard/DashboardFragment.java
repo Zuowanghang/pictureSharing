@@ -2,6 +2,8 @@ package com.example.picturesharing.ui.dashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,15 +28,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
+import com.example.picturesharing.DraftDetailsActivity;
 import com.example.picturesharing.R;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
+import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
-import com.example.picturesharing.util.ResponseBody;
+
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -356,15 +362,34 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>() {
-                }.getType();
+
                 // 获取响应体的json串
                 String body = response.body().string();
                 Log.d("图片上传", body);
                 // 解析json串到自己封装的状态
 
-                ResponseBody<Object> dataResponseBody = JSON.parseObject(body, jsonType);
-                Log.d("图片上传", dataResponseBody.toString());
+// TODO 判断获取数据成功不成功
+                PlaceholderContent data;
+                data = JSON.parseObject(body, PlaceholderContent.class);
+                System.out.println("图片上传"+data.getCode());
+                Log.d("图片上传", data.toString());
+
+                if(data.getCode() == 200 ){
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toasty.success(getContext(), "图片上传成功!", Toast.LENGTH_SHORT, true).show();
+                            showDialog();
+                        }
+                    });
+                }else {
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toasty.error(getContext(), "图片上传失败!", Toast.LENGTH_SHORT, true).show();
+
+                        }
+                    });                                        }
+
             }
         };
 
@@ -424,13 +449,29 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>() {
-                }.getType();
-                // 获取响应体的json串
 
                 String body = response.body().string();
                 Log.d("保存的草稿内容", body);
-                // 解析json串到自己封装的状态
+                PlaceholderContent data;
+                data = JSON.parseObject(body, PlaceholderContent.class);
+
+
+
+                if(data.getCode() == 200 ){
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toasty.success(getContext(), "草稿保存成功!", Toast.LENGTH_SHORT, true).show();
+
+                        }
+                    });
+                }else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toasty.error(getContext(), "草稿保存失败!", Toast.LENGTH_SHORT, true).show();
+
+                        }
+                    });                                   }
+
 
 
             }
@@ -474,5 +515,24 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 ex.printStackTrace();
             }
         }).start();
+    }
+
+
+
+
+    private void showDialog(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+        builder.setTitle("提示");
+        builder.setMessage("1234！");
+        builder.setPositiveButton("5678",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        AlertDialog dialog=builder.create();
+        dialog.show();
+
     }
 }

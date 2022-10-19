@@ -45,7 +45,6 @@ public class PictureMoreBean {
         private String pUserId;
         private String title;
         private String username;
-
         private boolean hasCollect;
         private boolean hasFocus;
         private boolean hasLike;

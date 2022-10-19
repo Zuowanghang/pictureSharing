@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.MultipartBody;
 import okhttp3.Response;
 import okhttp3.Call;
@@ -283,9 +285,17 @@ private  String id;
                 String body = response.body().string();
                 ResponseBody data = JSON.parseObject(body,ResponseBody.class);
                 Log.d("草稿相发布", body);
-                if(data.getData() != null && data.getCode() == 200){
-                    Log.d("草稿相发布成功  ————————》", data.getMsg());
-                }
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        if(data.getCode() == 200 ){
+                            Toasty.success(DraftDetailsActivity.this, "Success!", Toast.LENGTH_SHORT, true).show();
+                        }else {
+                            Toast.makeText(DraftDetailsActivity.this, "发布失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
 
 
                 // 解析json串到自己封装的状态
