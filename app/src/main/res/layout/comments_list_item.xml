@@ -32,8 +32,8 @@
 
             <TextView
                 android:id="@+id/comment"
-                android:layout_marginTop="3dp"
                 android:layout_width="200dp"
+                android:layout_marginTop="3dp"
                 android:layout_height="wrap_content"
                 android:text="唧唧歪歪唧唧歪歪 真不错。"
                 android:textSize="11sp" />

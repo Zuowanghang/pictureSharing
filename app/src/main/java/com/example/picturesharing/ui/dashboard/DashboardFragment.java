@@ -2,8 +2,6 @@ package com.example.picturesharing.ui.dashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.R;
@@ -35,8 +32,6 @@ import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.util.ResponseBody;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
@@ -47,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -253,7 +247,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         content.setText("");
         try {
             selected.clear();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

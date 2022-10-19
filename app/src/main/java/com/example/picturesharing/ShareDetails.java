@@ -23,7 +23,6 @@ import com.example.picturesharing.adapter.ImageTitleAdapter;
 import com.example.picturesharing.placeholder.PictureMoreBean;
 import com.example.picturesharing.pojo.Conmment1Bean;
 import com.example.picturesharing.pojo.DataBean;
-import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.util.ResponseBody;
 import com.google.gson.reflect.TypeToken;
@@ -97,7 +96,7 @@ public class ShareDetails extends AppCompatActivity {
         // 指示器位置
         banner.setIndicatorGravity(IndicatorConfig.Direction.CENTER);
         banner.setIndicatorMargins(new IndicatorConfig.Margins(0, 0,
-                BannerConfig.INDICATOR_MARGIN, (int) BannerUtils.dp2px(12)));
+                BannerConfig.INDICATOR_MARGIN, BannerUtils.dp2px(12)));
         banner.addBannerLifecycleObserver(this);
         recyclerView = findViewById(R.id.comment_RecyView);
 

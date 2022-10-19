@@ -216,9 +216,9 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
     //TODO 图片发现页适配器
     public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
-        private Boolean LikeBoolean = false;
-        private Boolean CollectBoolean = false;
-        private Boolean FocusBoolean = false;
+        private final Boolean LikeBoolean = false;
+        private final Boolean CollectBoolean = false;
+        private final Boolean FocusBoolean = false;
         private final List<PlaceholderContent.Data.Records> mValues;
 
         public MyItemRecyclerViewAdapter(List<PlaceholderContent.Data.Records> items) {

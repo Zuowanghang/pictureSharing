@@ -284,9 +284,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/tabLayoutPersonal"
-                tools:ignore="SpeakableTextPresentCheck"
                 android:paddingBottom="?attr/actionBarSize"
-                />
+                tools:ignore="SpeakableTextPresentCheck" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

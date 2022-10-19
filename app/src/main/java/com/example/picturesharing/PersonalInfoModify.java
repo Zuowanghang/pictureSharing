@@ -319,7 +319,7 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
                 data = JSON.parseObject(jsonData, PostImage.class);
 
                 if (data.getCode() == 200) {
-                    String url[] = data.getData().getImageUrlList();
+                    String[] url = data.getData().getImageUrlList();
                     post(url[0], mName, mSex, mIntroduction);
                 }
                 //上传图片分享，包括内容
