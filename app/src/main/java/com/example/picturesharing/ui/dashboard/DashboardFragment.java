@@ -2,6 +2,8 @@ package com.example.picturesharing.ui.dashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.R;
@@ -32,7 +35,8 @@ import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.util.ResponseBody;
-import com.google.gson.Gson;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
@@ -43,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -54,7 +59,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class DashboardFragment extends Fragment implements View.OnClickListener {
-    private Gson gson;
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
     private ArrayList<String> selected;
@@ -206,6 +210,11 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    /**
+     * 无论是存为草稿还是发布、又或者是取消编辑，都需要将页面内数据清除
+     *
+     * @param v 视图
+     */
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -220,32 +229,33 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
-                clearData();
+
                 break;
             }
             case R.id.release: {
                 release();
                 clearData();
-                ReleaseContent.savedData = null;
                 break;
             }
             case R.id.draft: {
                 saveAsDraft();
                 clearData();
-                ReleaseContent.savedData = null;
                 break;
             }
         }
     }
 
-
+    // 清空内容
     private void clearData() {
         ReleaseContent.savedData = null;
         releaseContent = null;
         title.setText("");
         content.setText("");
-        selected.clear();
-        adapter.refresh(selected);
+        try {
+            selected.clear();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 存为草稿
@@ -256,6 +266,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             postPicture(1,title.getText().toString(),content.getText().toString());
 
         }
+        adapter.refresh(selected);
     }
 
     // 发布

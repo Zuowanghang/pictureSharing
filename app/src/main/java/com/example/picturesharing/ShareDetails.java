@@ -25,6 +25,7 @@ import com.example.picturesharing.pojo.Conmment1Bean;
 import com.example.picturesharing.pojo.DataBean;
 import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
+import com.example.picturesharing.util.ResponseBody;
 import com.google.gson.reflect.TypeToken;
 import com.youth.banner.Banner;
 import com.youth.banner.config.BannerConfig;
@@ -61,7 +62,8 @@ public class ShareDetails extends AppCompatActivity {
     private ImageView support;
     private RecyclerView recyclerView;
     private EditText editText;
-private Button button;
+    private Button button;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +87,7 @@ private Button button;
         });
         button = findViewById(R.id.sendComment);
         banner = findViewById(R.id.banner);
-        editText = findViewById(R.id.Edit_Comment);
+        editText = findViewById(R.id.edit_comment);
         // 设置 Adapter
         banner.setAdapter(new ImageTitleAdapter(DataBean.getTestData3()));
         // 图片轮播指示器
@@ -100,38 +102,34 @@ private Button button;
         recyclerView = findViewById(R.id.comment_RecyView);
 
 
-
-            getPicture();
-            getComment();
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    postComment(editText.getText().toString());
-                    getComment();
-                }
-            });
-
-
-
-
-
+        getPicture();
+        getComment();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postComment(editText.getText().toString());
+                getComment();
+            }
+        });
 
 
     }
 
 
     //  获取图片
-    private void getPicture(){
+    private void getPicture() {
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
                 // 获取响应体的json串
                 String body = response.body().string();
                 Log.d("获取轮播图图片", body);
@@ -139,7 +137,7 @@ private Button button;
                 PictureMoreBean data;
                 data = JSON.parseObject(body, PictureMoreBean.class);
 
-                if(data.getCode() == 200) {
+                if (data.getCode() == 200) {
                     ShareDetails.this.runOnUiThread(() -> {
                         textView = findViewById(R.id.tv_content);
                         textView.setText(data.getData().getContent());
@@ -150,15 +148,13 @@ private Button button;
                         textView = findViewById(R.id.FavNum);
                         textView.setText("" + data.getData().getCollectNum());
                         textView = findViewById(R.id.supportNum);
-                        textView.setText(""+data.getData().getLikeNum());
+                        textView.setText("" + data.getData().getLikeNum());
 
                         Long timeGetTime = Long.parseLong(data.getData().getCreateTime());//获取事件用户的时间错
-                        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                         String time = sdf.format(timeGetTime);//显示正确的信息
                         textView = findViewById(R.id.tv_time);
                         textView.setText(time);
-
-
 
 
 //                Log.d("test", timeGetTime +"  现在的时间2-->:" + time2);
@@ -168,16 +164,13 @@ private Button button;
                 }
 
 
-
-
-
             }
         };
 
         new Thread(() -> {
-            System.out.println("sssssssssssssssssssssssssssssssssssssssssssssss"+UserData.getPictureId());
+            System.out.println("sssssssssssssssssssssssssssssssssssssssssssssss" + UserData.getPictureId());
             // url路径
-            String url = "http://47.107.52.7:88/member/photo/share/detail?shareId="+UserData.getPictureId()+"&userId="+UserData.getUserid();
+            String url = "http://47.107.52.7:88/member/photo/share/detail?shareId=" + UserData.getPictureId() + "&userId=" + UserData.getUserid();
 
             // 请求头
             Headers headers = new Headers.Builder()
@@ -197,13 +190,14 @@ private Button button;
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
-//发表品论
-    private void postComment(String comment){
+
+    //发表评论
+    private void postComment(String comment) {
 
         Callback callback = new Callback() {
             @Override
@@ -211,16 +205,16 @@ private Button button;
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
                 // 获取响应体的json串
                 String body = response.body().string();
                 Log.d("发表评论成功", body);
                 // 解析json串到自己封装的状态 JSON.parseObject(jsonData, PlaceholderContent.class);
-
-
             }
         };
 
@@ -260,14 +254,14 @@ private Button button;
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
 
-//获取评论
-    private void getComment(){
+    //获取评论
+    private void getComment() {
 
         Callback callback = new Callback() {
             @Override
@@ -275,10 +269,12 @@ private Button button;
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>(){}.getType();
+                Type jsonType = new TypeToken<ResponseBody<Object>>() {
+                }.getType();
                 // 获取响应体的json串
                 String body = response.body().string();
 
@@ -287,12 +283,12 @@ private Button button;
                 Conmment1Bean data;
                 data = JSON.parseObject(body, Conmment1Bean.class);
 
-                if(data.getCode() == 200) {
+                if (data.getCode() == 200) {
 
                     ShareDetails.this.runOnUiThread(() -> {
 
-                         List<Conmment1Bean.Data.Records> list = data.getData().getRecords();
-                        recyclerView.setAdapter(new CommentAdapter(list,ShareDetails.this));
+                        List<Conmment1Bean.Data.Records> list = data.getData().getRecords();
+                        recyclerView.setAdapter(new CommentAdapter(list, ShareDetails.this));
                         recyclerView.setLayoutManager(new LinearLayoutManager(ShareDetails.this));
                         //上面是布局管理器，没有就显示不出来。
                         System.out.println("出来");
@@ -303,7 +299,7 @@ private Button button;
         new Thread(() -> {
 
             // url路径
-            String url = "http://47.107.52.7:88/member/photo/comment/first?shareId="+UserData.getPictureId();
+            String url = "http://47.107.52.7:88/member/photo/comment/first?shareId=" + UserData.getPictureId();
 
             // 请求头
             Headers headers = new Headers.Builder()
@@ -323,48 +319,9 @@ private Button button;
                 OkHttpClient client = new OkHttpClient();
                 //发起请求，传入callback进行回调
                 client.newCall(request).enqueue(callback);
-            }catch (NetworkOnMainThreadException ex){
+            } catch (NetworkOnMainThreadException ex) {
                 ex.printStackTrace();
             }
         }).start();
     }
-
-    public static class ResponseBody <T> {
-
-        /**
-         * 业务响应码
-         */
-        private int code;
-        /**
-         * 响应提示信息
-         */
-        private String msg;
-        /**
-         * 响应数据
-         */
-        private T data;
-
-        public ResponseBody(){}
-
-        public int getCode() {
-            return code;
-        }
-        public String getMsg() {
-            return msg;
-        }
-        public T getData() {
-            return data;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return "ResponseBody{" +
-                    "code=" + code +
-                    ", msg='" + msg + '\'' +
-                    ", data=" + data +
-                    '}';
-        }
-    }
-
 }

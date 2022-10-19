@@ -43,6 +43,9 @@
     <string name="aboutUs">关于我们</string>
     <string name="timeStamp">20-10-15</string>
     <string name="_666">666</string>
+    <string name="confirmMessage">确认取消正在编辑的发布内容吗？</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
     <string name="rememberPassword">记住密码</string>
 
     <!--  需要保存的个人信息  -->
@@ -51,4 +54,8 @@
     <string name="account_username">name</string>
     <string name="account_password">pwd</string>
     <string name="logIn_remember_password">login_remember_password</string>
+    <string name="add_subscribe">+ 关注</string>
+    <string name="comments">评论</string>
+    <string name="addComment">发表评论…</string>
+    <string name="send">发送</string>
 </resources>

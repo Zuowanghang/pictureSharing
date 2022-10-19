@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:elevation="8dp"
     tools:context=".ui.notifications.NotificationsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -267,8 +268,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
+
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayoutPersonal"
                 android:layout_width="match_parent"
@@ -277,14 +278,15 @@
                 app:tabTextAppearance="@style/tabLayoutStyle"
                 tools:ignore="SpeakableTextPresentCheck" />
 
+            <!-- 设置marginBottom只会将 viewPager 更加往下顶，所以只能设置 paddingBottom -->
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/personalViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/tabLayoutPersonal"
-                tools:ignore="SpeakableTextPresentCheck" />
+                tools:ignore="SpeakableTextPresentCheck"
+                android:paddingBottom="?attr/actionBarSize"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -19,7 +19,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="left"
-            android:src="@drawable/back" />
+            android:src="@drawable/back"
+            tools:ignore="ContentDescription,RtlHardcoded" />
     </Toolbar>
 
     <LinearLayout
@@ -39,7 +40,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/a" />
 
@@ -71,22 +72,23 @@
                 android:layout_gravity="center">
 
                 <Button
-                    android:id="@+id/support"
                     android:layout_width="60dp"
                     android:layout_height="32dp"
-                    android:layout_toLeftOf="@+id/more"
+                    android:layout_toStartOf="@+id/more"
                     android:background="@drawable/add_to_subscribe"
-                    android:text="+ 关注"
+                    android:text="@string/add_subscribe"
                     android:textColor="@color/personalData"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <ImageView
                     android:id="@+id/more"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="5dp"
-                    android:src="@drawable/ic_baseline_more_vert_24" />
+                    android:src="@drawable/ic_baseline_more_vert_24"
+                    tools:ignore="ContentDescription" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -108,13 +110,15 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                tools:ignore="UselessParent">
 
                 <ImageView
                     android:id="@+id/itemSupported"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/supported" />
+                    android:src="@drawable/supported"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/supportNum"
@@ -122,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="3dp"
-                    android:layout_toRightOf="@+id/itemSupported"
+                    android:layout_toEndOf="@+id/itemSupported"
                     android:text=""
                     android:textColor="@color/black"
                     android:textSize="12sp" />
@@ -131,9 +135,10 @@
                     android:id="@+id/itemFav"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginLeft="39dp"
-                    android:layout_toRightOf="@+id/supportNum"
-                    android:src="@drawable/ic_baseline_favorite_24" />
+                    android:layout_marginStart="39dp"
+                    android:layout_toEndOf="@+id/supportNum"
+                    android:src="@drawable/ic_baseline_favorite_24"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/FavNum"
@@ -141,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="3dp"
-                    android:layout_toRightOf="@+id/itemFav"
+                    android:layout_toEndOf="@+id/itemFav"
                     android:text=""
                     android:textColor="@color/black"
                     android:textSize="12sp" />
@@ -152,8 +157,9 @@
                     android:layout_height="24dp"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="10dp"
-                    android:layout_toRightOf="@+id/FavNum"
-                    android:src="@drawable/heat" />
+                    android:layout_toEndOf="@+id/FavNum"
+                    android:src="@drawable/heat"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/heatNum"
@@ -161,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="3dp"
-                    android:layout_toRightOf="@+id/itemHeat"
+                    android:layout_toEndOf="@+id/itemHeat"
                     android:text="@string/_666"
                     android:textColor="@color/black"
                     android:textSize="12sp" />
@@ -170,7 +176,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/share" />
+                    android:src="@drawable/share"
+                    tools:ignore="ContentDescription" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -179,7 +186,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="60dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp">
 
@@ -188,7 +194,8 @@
                 android:layout_height="1dp"
                 android:background="@color/gray3"
                 android:paddingStart="20dp"
-                android:paddingEnd="20dp" />
+                android:paddingEnd="20dp"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/tv_title"
@@ -196,33 +203,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
+                android:hint="标题"
                 android:text=""
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_content"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="" />
+                android:layout_height="120dp">
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言描述语言" />
+            </ScrollView>
+
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:text="评论"
+                android:text="@string/comments"
                 android:textSize="18sp" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray3" />
+                android:background="@color/gray3"
+                tools:ignore="ContentDescription" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comment_RecyView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="150dp"
                 android:layout_marginTop="10dp"
                 tools:listitem="@layout/comments_list_item" />
         </LinearLayout>
@@ -239,15 +254,16 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <EditText
-            android:id="@+id/Edit_Comment"
+            android:id="@+id/edit_comment"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginEnd="80dp"
             android:background="@drawable/input_style"
-            android:hint="发表评论…"
-            android:textSize="18sp" />
+            android:hint="@string/addComment"
+            android:inputType="text"
+            android:textSize="18sp"
+            tools:ignore="Autofill,TouchTargetSizeCheck" />
 
         <Button
             android:id="@+id/sendComment"
@@ -255,7 +271,8 @@
             android:layout_height="32dp"
             android:layout_alignParentEnd="true"
             android:background="@drawable/input_style"
-            android:text="发送"
-            android:textSize="14sp" />
+            android:text="@string/send"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

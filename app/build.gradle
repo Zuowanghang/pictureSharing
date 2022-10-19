@@ -32,35 +32,26 @@ android {
 }
 
 dependencies {
+    // Toast 用户提示
+    implementation 'com.github.GrenderG:Toasty:1.5.2'
+    // material-dialog
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
+    // 图片选择
     implementation 'com.github.donkingliang:ImageSelector:2.2.1'
     // 轮播图
     implementation 'io.github.youth5201314:banner:2.2.2'
+    // JSON 解析
     implementation 'com.google.code.gson:gson:2.9.1'
+    // glide 图片处理
     implementation 'com.github.bumptech.glide:glide:4.14.2'
+    // viewPager 控件
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+    // 圆形图片
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    // 阿里 JSON
     implementation 'com.alibaba:fastjson:1.2.67'
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation 'io.github.youth5201314:banner:2.2.2'
-    implementation 'com.google.code.gson:gson:2.9.1'
-    implementation 'com.github.bumptech.glide:glide:4.14.2'
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    // http 通信
     implementation 'com.squareup.okhttp3:okhttp:3.5.0'
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.alibaba:fastjson:1.2.67'
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
