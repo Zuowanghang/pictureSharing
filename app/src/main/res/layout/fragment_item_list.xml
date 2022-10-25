@@ -14,8 +14,6 @@
         android:id="@+id/recyclerViewHome"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
         tools:listitem="@layout/fragment_item" />
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

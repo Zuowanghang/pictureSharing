@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +21,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
-import com.example.picturesharing.PictureActivity;
 import com.example.picturesharing.R;
 import com.example.picturesharing.ShareDetails;
 import com.example.picturesharing.databinding.FragmentItemBinding;
@@ -156,16 +154,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                                     Log.i("ssssssssssssss", JSON.toJSONString(list));
                                 }
                             });
-                        }else {
-                            view.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(requireActivity(), data.getMsg(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
                         }
-
                     }
                 });
 
@@ -227,9 +216,9 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
     //TODO 图片发现页适配器
     public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
-        private Boolean LikeBoolean = false;
-        private Boolean CollectBoolean = false;
-        private Boolean FocusBoolean = false;
+        private final Boolean LikeBoolean = false;
+        private final Boolean CollectBoolean = false;
+        private final Boolean FocusBoolean = false;
         private final List<PlaceholderContent.Data.Records> mValues;
 
         public MyItemRecyclerViewAdapter(List<PlaceholderContent.Data.Records> items) {

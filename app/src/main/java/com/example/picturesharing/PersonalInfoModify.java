@@ -25,19 +25,14 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.donkingliang.imageselector.utils.ImageSelector;
-import com.example.picturesharing.pojo.LogInPojo;
 import com.example.picturesharing.pojo.PostImage;
-import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.pojo.UserInfo;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -235,7 +230,6 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
                     n = 1;
                 default:
                     break;
-
             }
             // url路径
             String url = "http://47.107.52.7:88/member/photo/user/update";
@@ -325,7 +319,7 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
                 data = JSON.parseObject(jsonData, PostImage.class);
 
                 if (data.getCode() == 200) {
-                    String url[] = data.getData().getImageUrlList();
+                    String[] url = data.getData().getImageUrlList();
                     post(url[0], mName, mSex, mIntroduction);
                 }
                 //上传图片分享，包括内容

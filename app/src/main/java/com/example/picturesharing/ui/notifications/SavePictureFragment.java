@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,12 +23,8 @@ import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.example.picturesharing.DraftDetailsActivity;
 import com.example.picturesharing.R;
-import com.example.picturesharing.ShareDetails;
 import com.example.picturesharing.databinding.FragmentItemBinding;
-import com.example.picturesharing.placeholder.PlaceholderContent;
-import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.SavePictureBean;
-import com.example.picturesharing.pojo.User;
 import com.example.picturesharing.pojo.UserData;
 import com.google.gson.Gson;
 
@@ -147,27 +142,16 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         Log.i("ssssssssssssss", "4444444444444444444444444444444444444444444444444444444444444444444444444");
                         SavePictureBean data;
                         data = JSON.parseObject(jsonData, SavePictureBean.class);
-                        if(data.getCode() == 200 && data.getData()!=null){
-                            list = data.getData().getRecords();
+                        list = data.getData().getRecords();
 //                       Log.i("ssssssssssssss",JSON.toJSONString(list));
-                            view.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
-                                    Log.i("ssssssssssssss", JSON.toJSONString(list));
+                        view.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
+                                Log.i("ssssssssssssss", JSON.toJSONString(list));
 
-                                }
-                            });
-                        } else {
-                            view.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(requireActivity(), data.getMsg(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }
-
+                            }
+                        });
 
 
                     }
@@ -180,13 +164,123 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         }).start();
     }
 
+    /**
+     * 回调
+     */
 
+    //TODO 取消和关注接口
+    private void goFcous(String key, int str) {
+
+        new Thread(() -> {
+            String url = null;
+            switch (str) {
+                case 1:
+                    url = "http://47.107.52.7:88/member/photo/focus?focusUserId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("关注", url);
+                    break;
+                case 2:
+                    url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("取消关注", url);
+
+                    break;
+                case 3:
+                    url = "http://47.107.52.7:88/member/photo/collect?shareId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("收藏", url);
+                    break;
+                case 4:
+                    url = "http://47.107.52.7:88/member/photo/like?shareId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("点赞", url);
+
+                    break;
+                default:
+            }
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("appId", appid)
+                    .add("appSecret", appsecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+            //请求组合创建
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, ""))
+                    .build();
+            try {
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, IOException e) {
+
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, Response response) throws IOException {
+
+                    }
+                });
+
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+
+            }
+        }).start();
+    }
+
+    /**
+     * http响应体的封装协议
+     *
+     * @param <T> 泛型
+     */
+    public static class ResponseBody<T> {
+
+        /**
+         * 业务响应码
+         */
+        private int code;
+        /**
+         * 响应提示信息
+         */
+        private String msg;
+        /**
+         * 响应数据
+         */
+        private T data;
+
+        public ResponseBody() {
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "ResponseBody{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    ", data=" + data +
+                    '}';
+        }
+    }
 
     //TODO 图片发现页适配器
     public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
-        private Boolean LikeBoolean = false;
-        private Boolean CollectBoolean = false;
-        private Boolean FocusBoolean = false;
+        private final Boolean LikeBoolean = false;
+        private final Boolean CollectBoolean = false;
+        private final Boolean FocusBoolean = false;
         private final List<SavePictureBean.Data.Records> mValues;
 
         public MyItemRecyclerViewAdapter(List<SavePictureBean.Data.Records> items) {
@@ -222,7 +316,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                             for (String str : holder.mItem.getImageUrlList()) {
                                 images.add(str);
                             }
-                            UserData.setPictureId(holder.mItem.getId());
+
                             final String IMAGES = "images";
                             final String ARTICLE = "article";
                             Intent intent = new Intent(getContext(), DraftDetailsActivity.class);
@@ -230,12 +324,9 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                             String[] article = new String[] { holder.mItem.getTitle(), holder.mItem.getContent() };
                             intent.putExtra(ARTICLE, article);
                             intent.putStringArrayListExtra(IMAGES, images);
-                            intent.putExtra("imageCode",holder.mItem.getImageCode());
-                            intent.putExtra("id",holder.mItem.getId());
                             //发送单个草稿的内用
                           //  releaseContent
                           startActivity(intent);
-
                         }
                     });
 
@@ -277,5 +368,4 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
         }
     }
-
 }

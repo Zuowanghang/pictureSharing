@@ -10,7 +10,6 @@ public class SavePictureBean {
     private Data data;
 
 
-
     public int getCode() {
         return code;
     }
@@ -40,7 +39,6 @@ public class SavePictureBean {
         private int total;
         private int size;
         private int current;
-
 
 
         public List<Records> getRecords() {
@@ -91,7 +89,6 @@ public class SavePictureBean {
             private boolean hasCollect;
             private boolean hasFocus;
             private Object username;
-
 
 
             public String getId() {

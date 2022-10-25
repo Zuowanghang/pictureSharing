@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-import com.example.picturesharing.BlankFragment;
 import com.example.picturesharing.MySettings;
 import com.example.picturesharing.PersonalInfoModify;
 import com.example.picturesharing.R;

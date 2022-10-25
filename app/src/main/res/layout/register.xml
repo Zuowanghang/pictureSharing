@@ -35,7 +35,8 @@
             android:inputType="text"
             android:maxLines="1"
             android:textColor="@color/black"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            tools:ignore="Autofill" />
 
         <EditText
             android:id="@+id/register_password"
@@ -51,7 +52,8 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:textColor="@color/black"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            tools:ignore="Autofill" />
 
         <EditText
             android:id="@+id/password_repeat"
@@ -67,7 +69,8 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:textColor="@color/black"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            tools:ignore="Autofill" />
 
     </RelativeLayout>
 
@@ -82,10 +85,13 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
-            android:layout_margin="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/radius"
             android:backgroundTint="#DCDCDC"
+            android:focusableInTouchMode="false"
             android:text="@string/signUp"
             android:textColor="@color/darkkhaki"
             android:textSize="20sp" />
@@ -98,6 +104,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/radius"
+            android:focusableInTouchMode="false"
             android:text="@string/signIn"
             android:textColor="@android:color/white"
             android:textSize="20sp" />

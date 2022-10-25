@@ -44,7 +44,6 @@ public class LogInPojo {
         private String username;
 
 
-
         public String getAppKey() {
             return appKey;
         }
