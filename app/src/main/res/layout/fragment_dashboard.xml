@@ -65,7 +65,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:maxImageSize="20dp" />
+        app:maxImageSize="20dp"
+        tools:ignore="ContentDescription,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
     <ScrollView
         android:id="@+id/releaseInfo"
@@ -108,6 +109,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageSelector"
+                    tools:ignore="SpeakableTextPresentCheck"
                     tools:listitem="@layout/layout_image" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -140,7 +142,7 @@
                     android:textSize="25sp"
                     android:theme="@style/MyEditText"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="Autofill" />
+                    tools:ignore="Autofill,TextFields" />
 
                 <EditText
                     android:id="@+id/article_content"
@@ -150,13 +152,13 @@
                     android:hint="@string/editYourText"
                     android:includeFontPadding="false"
                     android:lineSpacingMultiplier="1.2"
-                    android:minLines="8"
+                    android:minLines="12"
                     android:paddingTop="20dp"
                     android:paddingBottom="20dp"
                     android:textSize="18sp"
                     android:theme="@style/MyEditText"
                     app:layout_constraintTop_toBottomOf="@+id/article_title"
-                    tools:ignore="Autofill" />
+                    tools:ignore="Autofill,TextFields" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -221,45 +223,64 @@
                         android:id="@+id/tv_tag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:text="标签"
+                        android:text="@string/tag"
                         android:textColor="@color/gray"
                         android:textSize="20sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <CheckBox
+                    <Button
                         android:id="@+id/original"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="原创"
+                        android:layout_width="50dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/original"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_tag"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <CheckBox
+                    <Button
                         android:id="@+id/non_original"
-                        style="@style/Widget.AppCompat.CompoundButton.RadioButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="非原创"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/non_original"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/original"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <CheckBox
+                    <Button
                         android:id="@+id/non_copy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/non_copy"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/non_original"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <CheckBox
+                    <Button
                         android:id="@+id/non_commerce"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:textColor="@color/gray"
+                        android:text="@string/non_commerce"
+                        android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/non_copy"
                         app:layout_constraintTop_toTopOf="parent" />

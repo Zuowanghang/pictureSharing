@@ -68,6 +68,14 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ReleaseContent releaseContent;
     //    private Button release;
     private FloatingActionButton releaseBtn;
+    private Button tag1;
+    private Boolean state1 = true;
+    private Boolean state2 = true;
+    private Boolean state3 = true;
+    private Boolean state4 = true;
+    private Button tag2;
+    private Button tag3;
+    private Button tag4;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +100,16 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         releaseBtn = binding.fab;
         releaseBtn.setOnClickListener(this);
+
+        tag1 = binding.original;
+        tag2 = binding.nonOriginal;
+        tag3 = binding.nonCopy;
+        tag4 = binding.nonCommerce;
+
+        tag1.setOnClickListener(this);
+        tag2.setOnClickListener(this);
+        tag3.setOnClickListener(this);
+        tag4.setOnClickListener(this);
 
         adapter = new ImageAdapter(getContext());
         adapter.setOnImageDeleteListener(this::removeData);
@@ -223,6 +241,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
+                // 需要提示用户“是否确认删除当前输入内容”
                 clearData();
                 break;
             }
@@ -236,6 +255,37 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 clearData();
                 break;
             }
+            case R.id.original: {
+                // 改变按钮样式
+                changeState(tag1, state1);
+                state1 = !state1;
+                break;
+            }
+            case R.id.non_original: {
+                changeState(tag2, state2);
+                state2 = !state2;
+                break;
+            }
+            case R.id.non_copy: {
+                changeState(tag3, state3);
+                state3 = !state3;
+                break;
+            }
+            case R.id.non_commerce: {
+                changeState(tag4, state4);
+                state4 = !state4;
+                break;
+            }
+        }
+    }
+
+    private void changeState(Button tag, Boolean state) {
+        if (state) {
+            tag.setBackground(getResources().getDrawable(R.drawable.tag_selected));
+            tag.setTextColor(getResources().getColor(R.color.white));
+        } else {
+            tag.setBackground(getResources().getDrawable(R.drawable.button_tag));
+            tag.setTextColor(getResources().getColor(R.color.gray));
         }
     }
 
@@ -259,6 +309,11 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         content.setText("");
         try {
             selected.clear();
+            adapter = new ImageAdapter(requireContext());
+            adapter.refresh(selected);
+            adapter.setOnImageDeleteListener(this::removeData);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            recyclerView.setAdapter(adapter);
         } catch (Exception e) {
             e.printStackTrace();
         }
