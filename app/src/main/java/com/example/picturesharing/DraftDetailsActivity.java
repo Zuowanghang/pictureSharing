@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,7 +27,10 @@ import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.UserData;
+
+import com.example.picturesharing.util.ResponseBody;
 import com.google.gson.reflect.TypeToken;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +40,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.Response;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.Request;
 
 public class DraftDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE = 0x00000011;
