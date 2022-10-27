@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:paddingBottom="70dp"
+        android:paddingBottom="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/releaseToolBar">
 
@@ -152,7 +152,7 @@
                     android:hint="@string/editYourText"
                     android:includeFontPadding="false"
                     android:lineSpacingMultiplier="1.2"
-                    android:minLines="12"
+                    android:minLines="10"
                     android:paddingTop="20dp"
                     android:paddingBottom="20dp"
                     android:textSize="18sp"
@@ -233,56 +233,55 @@
                         android:id="@+id/original"
                         android:layout_width="50dp"
                         android:layout_height="30dp"
-                        android:layout_marginStart="40dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/button_tag"
                         android:text="@string/original"
                         android:textColor="@color/gray"
                         android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_tag"
+                        app:layout_constraintEnd_toStartOf="@+id/non_original"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Button
                         android:id="@+id/non_original"
                         android:layout_width="60dp"
                         android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/button_tag"
                         android:text="@string/non_original"
                         android:textColor="@color/gray"
                         android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/original"
+                        app:layout_constraintEnd_toStartOf="@+id/non_copy"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Button
                         android:id="@+id/non_copy"
                         android:layout_width="60dp"
                         android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/button_tag"
                         android:text="@string/non_copy"
                         android:textColor="@color/gray"
                         android:textSize="11sp"
+                        app:layout_constraintEnd_toStartOf="@+id/non_commerce"
+                        android:layout_marginEnd="5dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/non_original"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Button
                         android:id="@+id/non_commerce"
                         android:layout_width="60dp"
                         android:layout_height="30dp"
-                        android:layout_marginStart="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/button_tag"
-                        android:textColor="@color/gray"
                         android:text="@string/non_commerce"
+                        android:textColor="@color/gray"
                         android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/non_copy"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView

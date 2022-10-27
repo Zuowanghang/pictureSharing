@@ -54,8 +54,10 @@ public class MyPostPictureFragment extends Fragment {
     private View view;
     private ListFragment listFragment;
     private RecyclerView recyclerView;
-    private Gson gson ;
-public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
+    private Gson gson;
+    public static final String MESSAGE_STRING = "com." +
+            "glriverside.xgqin.code04.MESSAGE";
+
     public MyPostPictureFragment() {
     }
 
@@ -108,7 +110,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         new Thread(() -> {
             // url路径
             String userid = "0";
-            String url = "http://47.107.52.7:88/member/photo/share/myself?userId="+UserData.getUserid();
+            String url = "http://47.107.52.7:88/member/photo/share/myself?userId=" + UserData.getUserid();
             // 请求头
             Headers headers = new Headers.Builder()
                     .add("appId", UserData.getAppId())
@@ -124,13 +126,14 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                     .get()
                     .build();
             try {
-               Call call = client.newCall(request);
+                Call call = client.newCall(request);
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, IOException e) {
                         //TODO 请求失败处理
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
                         //TODO 请求成功处理
@@ -141,7 +144,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         // 解析json串到自己封装的状态
                         PlaceholderContent data;
                         data = JSON.parseObject(jsonData, PlaceholderContent.class);
-                        if (data.getData() != null){
+                        if (data.getData() != null) {
                             list = data.getData().getRecords();
                             view.post(new Runnable() {
                                 @Override
@@ -149,7 +152,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                                     recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
                                 }
                             });
-                        }else {
+                        } else {
                             view.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -276,11 +279,11 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         public void onClick(View v) {
                             UserData.setPictureUserName(holder.mItem.getUsername());
 
-                            UserData.setPictureId( holder.mItem.getId());
+                            UserData.setPictureId(holder.mItem.getId());
                             UserData.setImageUrlList(holder.mItem.getImageUrlList());
                             Intent intent = new Intent(getContext(), ShareDetails.class);
 //                          intent.putExtra( MESSAGE_STRING, message);
-                          startActivity(intent);
+                            startActivity(intent);
 
                         }
                     });
@@ -325,23 +328,28 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
         }
     }
+
     //TODO 取消和关注接口
-    private void goFcous(String key,int str) {
+    private void goFcous(String key, int str) {
 
         new Thread(() -> {
             String url = null;
             switch (str) {
-                case 1 :  url = "http://47.107.52.7:88/member/photo/focus?focusUserId="+ key+"&userId="+UserData.getUserid();
+                case 1:
+                    url = "http://47.107.52.7:88/member/photo/focus?focusUserId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("关注", url);
                     break;
-                case 2 : url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId="+ key+"&userId="+ UserData.getUserid();
+                case 2:
+                    url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("取消关注", url);
 
                     break;
-                case 3 :  url = "http://47.107.52.7:88/member/photo/collect?shareId="+key+"&userId="+UserData.getUserid();
+                case 3:
+                    url = "http://47.107.52.7:88/member/photo/collect?shareId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("收藏", url);
                     break;
-                case 4 :  url = "http://47.107.52.7:88/member/photo/like?shareId=" + key+ "&userId="+UserData.getUserid();
+                case 4:
+                    url = "http://47.107.52.7:88/member/photo/like?shareId=" + key + "&userId=" + UserData.getUserid();
                     Log.d("点赞", url);
 
                     break;
@@ -350,7 +358,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
             // 请求头
             Headers headers = new Headers.Builder()
-                    .add("appId",appid)
+                    .add("appId", appid)
                     .add("appSecret", appsecret)
                     .add("Accept", "application/json, text/plain, */*")
                     .build();
@@ -369,6 +377,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
 
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
 
