@@ -20,7 +20,7 @@
             android:layout_height="335dp"
             android:background="@color/personalData"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|exitUntilCollapsed|enterAlwaysCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|exitUntilCollapsed">
             <!--    吸顶效果并且使得菜单按钮固定在页面上（小问题：menu会被盖住）    -->
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -116,8 +116,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:text="@string/id_20201008"
-                            android:textColor="#212121"
-                            android:textSize="11sp" />
+                            android:textColor="@color/white"
+                            android:textSize="9sp"
+                            tools:ignore="SmallSp" />
 
                         <!-- 横向展示性别和等级 -->
                         <LinearLayout
@@ -146,7 +147,7 @@
                         android:id="@+id/modify"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:background="@drawable/edit_button"
                         android:text="@string/editInfo"

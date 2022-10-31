@@ -2,11 +2,13 @@ package com.example.picturesharing.ui.dashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,15 +31,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.donkingliang.imageselector.utils.ImageSelector;
 import com.example.picturesharing.DraftDetailsActivity;
+import com.example.picturesharing.MainActivity;
+import com.example.picturesharing.MyToast.MyApplication;
 import com.example.picturesharing.R;
+import com.example.picturesharing.ShareDetails;
 import com.example.picturesharing.adapter.ImageAdapter;
 import com.example.picturesharing.databinding.FragmentDashboardBinding;
 import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
+import com.example.picturesharing.util.ResponseBody;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.reflect.TypeToken;
 
 import com.google.gson.Gson;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 
 import java.io.File;
@@ -61,6 +70,9 @@ import okhttp3.Response;
 
 public class DashboardFragment extends Fragment implements View.OnClickListener {
     private Gson gson;
+    private long mLastClickTime = 0;
+    public static final long TIME_INTERVAL = 1000L;
+
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
     private ArrayList<String> selected;
@@ -73,8 +85,21 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     private ImageView cancel;
     private ImageView imageSelector;
     private ReleaseContent releaseContent;
+    //    private Button release;
+    private FloatingActionButton releaseBtn;
+    private Button tag1;
+    private Boolean state1 = true;
+    private Boolean state2 = true;
+    private Boolean state3 = true;
+    private Boolean state4 = true;
+    private Button tag2;
+    private Button tag3;
+    private Button tag4;
     private Button release;
     private String imageCode;
+    private LoadingDialog ld;
+    private String str;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -97,8 +122,18 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         cancel = root.findViewById(R.id.cancel);
         cancel.setOnClickListener(this);
 
-        release = binding.release;
-        release.setOnClickListener(this);
+        releaseBtn = binding.fab;
+        releaseBtn.setOnClickListener(this);
+
+        tag1 = binding.original;
+        tag2 = binding.nonOriginal;
+        tag3 = binding.nonCopy;
+        tag4 = binding.nonCommerce;
+
+        tag1.setOnClickListener(this);
+        tag2.setOnClickListener(this);
+        tag3.setOnClickListener(this);
+        tag4.setOnClickListener(this);
 
         adapter = new ImageAdapter(getContext());
         adapter.setOnImageDeleteListener(this::removeData);
@@ -148,7 +183,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         adapter.refresh(selected);
         // 本意是更新其中数据，但是实际运行过程中报错
 //        releaseContent.setImages(selected);
-        ReleaseContent.savedData = JSON.toJSONString(releaseContent);
+        ReleaseContent.savedData = "";
     }
 
     /**
@@ -212,6 +247,11 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+    /**
+     * 无论是存为草稿还是发布、又或者是取消编辑，都需要将页面内数据清除
+     *
+     * @param v 视图
+     */
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -226,68 +266,143 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 break;
             }
             case R.id.cancel: {
+                // 需要提示用户“是否确认删除当前输入内容”
                 clearData();
                 break;
             }
-            case R.id.release: {
-                release();
-                clearData();
-                ReleaseContent.savedData = null;
+            case R.id.fab: {
+                if (isOk()) {
+
+                    release();
+
+
+                    ReleaseContent.savedData = null;
+                } else {
+                    Toast.makeText(MyApplication.getContext(), "信息项不能为空，请填写信息再发布", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
             }
             case R.id.draft: {
-                saveAsDraft();
-                clearData();
-                ReleaseContent.savedData = null;
+                if (isOk()) {
+                    saveAsDraft();
+                    clearData();
+                    ReleaseContent.savedData = null;
+                } else {
+                    Toast.makeText(MyApplication.getContext(), "信息项不能为空，请填写信息再保存", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+            case R.id.original: {
+                // 改变按钮样式
+                changeState(tag1, state1);
+                state1 = !state1;
+                break;
+            }
+            case R.id.non_original: {
+                changeState(tag2, state2);
+                state2 = !state2;
+                break;
+            }
+            case R.id.non_copy: {
+                changeState(tag3, state3);
+                state3 = !state3;
+                break;
+            }
+            case R.id.non_commerce: {
+                changeState(tag4, state4);
+                state4 = !state4;
                 break;
             }
         }
     }
 
+    private void changeState(Button tag, Boolean state) {
+        if (state) {
+            tag.setBackground(getResources().getDrawable(R.drawable.tag_selected));
+            tag.setTextColor(getResources().getColor(R.color.white));
+        } else {
+            tag.setBackground(getResources().getDrawable(R.drawable.button_tag));
+            tag.setTextColor(getResources().getColor(R.color.gray));
+        }
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        ReleaseContent info = new ReleaseContent();
+        info.setImages(selected);
+        info.setTitle(title.getText().toString());
+        info.setContent(content.getText().toString());
+        ReleaseContent.savedData = JSON.toJSONString(info);
+        System.out.println(JSON.toJSONString(info));
+        System.out.println("On Pause");
+    }
+
+    // 清空内容
     private void clearData() {
         ReleaseContent.savedData = null;
         releaseContent = null;
         title.setText("");
         content.setText("");
-        selected.clear();
-        adapter.refresh(selected);
+        try {
+            selected.clear();
+            adapter = new ImageAdapter(requireContext());
+            adapter.refresh(selected);
+            adapter.setOnImageDeleteListener(this::removeData);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            recyclerView.setAdapter(adapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 存为草稿
     private void saveAsDraft() {
-        if (selected != null) {
-            System.out.println("保存点击事件");
-            System.out.println(title.getText().toString());
-            postPicture(1,title.getText().toString(),content.getText().toString());
+        System.out.println("保存点击事件");
+        System.out.println(title.getText().toString());
+        ld = new LoadingDialog(getActivity());
+        ld.setLoadingText("正在上传，请耐心等待。")
+                .setSuccessText("保存成功")//显示加载成功时的文字
+                .setInterceptBack(true)
+                .show();
+        postPicture(1, title.getText().toString(), content.getText().toString());
 
-        }
+
+        adapter.refresh(selected);
     }
 
     // 发布
     private void release() {
-//        System.out.println("发布点击事件");
-//        System.out.println(title.getText().toString());
-        if (selected != null) {
-            postPicture(0,title.getText().toString(),content.getText().toString());
 
-            System.out.println("woshi 我是相册的地址ssssssssssssssssssssssssssssssssssssssss" + selected);
-        }
+        ld = new LoadingDialog(getActivity());
+        ld.setLoadingText("正在上传，请耐心等待。")
+                .setSuccessText("上传成功")//显示加载成功时的文字
+                .setInterceptBack(true)
+                .show();
+        postPicture(0, title.getText().toString(), content.getText().toString());
 
 
     }
 
+    private boolean isOk() {
+
+        if (!title.getText().toString().equals("") && !content.getText().toString().equals("") && selected != null) {
+            return true;
+        } else return false;
+    }
 
 
-        //n==0，直接发布图片到动态；
+    //n==0，直接发布图片到动态；
     //n == 1 ,保存到草稿相
-    private void postPicture(int n,String title, String content) {
+    private void postPicture(int n, String title, String content) {
         Callback callback = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
                 //TODO 请求失败处理
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
@@ -300,10 +415,20 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 PostImage data;
                 data = JSON.parseObject(jsonData, PostImage.class);
                 //上传图片分享，包括内容
-                if (n == 0) {
-                    post(data.getData().getImageCode(),title,content);
+                if (data.getCode() == 200) {
+                    if (n == 0) {
+                        post(data.getData().getImageCode(), title, content);
+                    } else {
+                        savePost(data.getData().getImageCode(), title, content);
+                    }
                 } else {
-                    savePost(data.getData().getImageCode(),title,content);
+                    imageSelector.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ld.setFailedText("图片超过上传文件大小");
+                            ld.loadFailed();
+                        }
+                    });
                 }
             }
         };
@@ -349,8 +474,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         }).start();
     }
 
-    //上传图片获取图片的imageCode
-    private void post(String imageCode ,String title, String content) {
+
+    //上传图片获取图片的imageCode （新增图片分享）
+    private void post(String imageCode, String title, String content) {
 
         Callback callback = new Callback() {
             @Override
@@ -371,24 +497,29 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 // TODO 判断获取数据成功不成功
                 PlaceholderContent data;
                 data = JSON.parseObject(body, PlaceholderContent.class);
-                System.out.println("图片上传"+data.getCode());
+                System.out.println("图片上传" + data.getCode());
                 Log.d("图片上传", data.toString());
-
-                if(data.getCode() == 200 ){
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toasty.success(getContext(), "图片上传成功!", Toast.LENGTH_SHORT, true).show();
-                            showDialog();
+                imageSelector.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (data.getCode() == 200) {
+                            ld.loadSuccess();
+                            clearData();
+                        } else {
+                            ld.setFailedText("上传失败");
+                            ld.loadFailed();
                         }
-                    });
-                }else {
+                    }
+                });
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Looper.prepare();
+//
+//                        Looper.loop();
+//                    }
+//                }).start();
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toasty.error(getContext(), "图片上传失败!", Toast.LENGTH_SHORT, true).show();
-
-                        }
-                    });                                        }
 
             }
         };
@@ -409,7 +540,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
             // 请求体
             // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
             Map<String, Object> bodyMap = new HashMap<>();
-            System.out.println("请求里面是否成功"+title+content);
+            System.out.println("请求里面是否成功" + title + content);
             bodyMap.put("imageCode", imageCode);
             bodyMap.put("pUserId", UserData.getUserid());
             bodyMap.put("title", title);
@@ -437,7 +568,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
     //保存图片分享
-    private void savePost(String imageCode,String title, String content) {
+    private void savePost(String imageCode, String title, String content) {
 
         Callback callback = new Callback() {
             @Override
@@ -454,24 +585,18 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
                 Log.d("保存的草稿内容", body);
                 PlaceholderContent data;
                 data = JSON.parseObject(body, PlaceholderContent.class);
+                imageSelector.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (data.getCode() == 200) {
+                            ld.loadSuccess();
 
-
-
-                if(data.getCode() == 200 ){
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toasty.success(getContext(), "草稿保存成功!", Toast.LENGTH_SHORT, true).show();
-
+                        } else {
+                            ld.setFailedText("保存失败,请图片大小超过承受范围或网络有问题");
+                            ld.loadFailed();
                         }
-                    });
-                }else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toasty.error(getContext(), "草稿保存失败!", Toast.LENGTH_SHORT, true).show();
-
-                        }
-                    });                                   }
-
+                    }
+                });
 
 
             }
@@ -518,21 +643,4 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
 
-
-
-    private void showDialog(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
-        builder.setTitle("提示");
-        builder.setMessage("1234！");
-        builder.setPositiveButton("5678",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-        AlertDialog dialog=builder.create();
-        dialog.show();
-
-    }
 }

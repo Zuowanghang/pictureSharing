@@ -51,10 +51,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         System.out.println("这里是设配器"+image);
         boolean isCutImage = ImageUtil.isCutImage(mContext, image);
         if (isAndroidQ && !isCutImage) {
-            System.out.println("我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里");
+//            System.out.println("我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里我进来了这里");
             Glide.with(this.adapterView).load(image).into(holder.imageView);
         } else {
-            System.out.println("我在那里我在那里我在那里我在那里我在那里我在那里我在那里我在那里我在那里");
+//            System.out.println("我在那里我在那里我在那里我在那里我在那里我在那里我在那里我在那里我在那里");
             Glide.with(this.adapterView).load(image).into(holder.imageView);
         }
 
