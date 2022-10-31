@@ -266,8 +266,8 @@
                         android:text="@string/non_copy"
                         android:textColor="@color/gray"
                         android:textSize="11sp"
-                        app:layout_constraintEnd_toStartOf="@+id/non_commerce"
                         android:layout_marginEnd="5dp"
+                        app:layout_constraintEnd_toStartOf="@+id/non_commerce"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

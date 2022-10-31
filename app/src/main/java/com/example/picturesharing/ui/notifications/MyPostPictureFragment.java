@@ -54,9 +54,9 @@ public class MyPostPictureFragment extends Fragment {
     private View view;
     private ListFragment listFragment;
     private RecyclerView recyclerView;
-    private Gson gson;
     public static final String MESSAGE_STRING = "com." +
             "glriverside.xgqin.code04.MESSAGE";
+    private Gson gson;
 
     public MyPostPictureFragment() {
     }
@@ -221,11 +221,73 @@ public class MyPostPictureFragment extends Fragment {
         }
     }
 
+    //TODO 取消和关注接口
+    private void goFcous(String key, int str) {
+
+        new Thread(() -> {
+            String url = null;
+            switch (str) {
+                case 1:
+                    url = "http://47.107.52.7:88/member/photo/focus?focusUserId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("关注", url);
+                    break;
+                case 2:
+                    url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("取消关注", url);
+
+                    break;
+                case 3:
+                    url = "http://47.107.52.7:88/member/photo/collect?shareId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("收藏", url);
+                    break;
+                case 4:
+                    url = "http://47.107.52.7:88/member/photo/like?shareId=" + key + "&userId=" + UserData.getUserid();
+                    Log.d("点赞", url);
+
+                    break;
+                default:
+            }
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("appId", appid)
+                    .add("appSecret", appsecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+            //请求组合创建
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, ""))
+                    .build();
+            try {
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, IOException e) {
+
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, Response response) throws IOException {
+
+                    }
+                });
+
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+
+            }
+        }).start();
+    }
+
     //TODO 图片发现页适配器
     public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
-        private Boolean LikeBoolean = false;
-        private Boolean CollectBoolean = false;
-        private Boolean FocusBoolean = false;
+        private final Boolean LikeBoolean = false;
+        private final Boolean CollectBoolean = false;
+        private final Boolean FocusBoolean = false;
         private final List<PlaceholderContent.Data.Records> mValues;
 
         public MyItemRecyclerViewAdapter(List<PlaceholderContent.Data.Records> items) {
@@ -327,67 +389,5 @@ public class MyPostPictureFragment extends Fragment {
             }
 
         }
-    }
-
-    //TODO 取消和关注接口
-    private void goFcous(String key, int str) {
-
-        new Thread(() -> {
-            String url = null;
-            switch (str) {
-                case 1:
-                    url = "http://47.107.52.7:88/member/photo/focus?focusUserId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("关注", url);
-                    break;
-                case 2:
-                    url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("取消关注", url);
-
-                    break;
-                case 3:
-                    url = "http://47.107.52.7:88/member/photo/collect?shareId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("收藏", url);
-                    break;
-                case 4:
-                    url = "http://47.107.52.7:88/member/photo/like?shareId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("点赞", url);
-
-                    break;
-                default:
-            }
-
-            // 请求头
-            Headers headers = new Headers.Builder()
-                    .add("appId", appid)
-                    .add("appSecret", appsecret)
-                    .add("Accept", "application/json, text/plain, */*")
-                    .build();
-            //请求组合创建
-            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-            Request request = new Request.Builder()
-                    .url(url)
-                    // 将请求头加至请求中
-                    .headers(headers)
-                    .post(RequestBody.create(MEDIA_TYPE_JSON, ""))
-                    .build();
-            try {
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, IOException e) {
-
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, Response response) throws IOException {
-
-                    }
-                });
-
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-
-            }
-        }).start();
     }
 }
