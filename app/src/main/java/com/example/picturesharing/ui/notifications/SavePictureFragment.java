@@ -1,6 +1,8 @@
 package com.example.picturesharing.ui.notifications;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.example.picturesharing.DraftDetailsActivity;
 import com.example.picturesharing.R;
 import com.example.picturesharing.databinding.FragmentItemBinding;
+import com.example.picturesharing.placeholder.PictureMoreBean;
 import com.example.picturesharing.pojo.SavePictureBean;
 import com.example.picturesharing.pojo.UserData;
 import com.google.gson.Gson;
@@ -33,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -45,7 +50,7 @@ import okhttp3.Response;
 
 public class SavePictureFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
-public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
+    public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAGE";
     String appid = UserData.appId;
     String appsecret = UserData.appSecret;
     private String str;
@@ -55,7 +60,8 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
     private View view;
     private ListFragment listFragment;
     private RecyclerView recyclerView;
-    private Gson gson ;
+    private Gson gson;
+
     public SavePictureFragment() {
     }
 
@@ -108,7 +114,7 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
         new Thread(() -> {
             // url路径
             String userid = "0";
-            String url = "http://47.107.52.7:88/member/photo/share/save?userId="+UserData.getUserid();
+            String url = "http://47.107.52.7:88/member/photo/share/save?userId=" + UserData.getUserid();
             // 请求头
             Headers headers = new Headers.Builder()
                     .add("appId", UserData.getAppId())
@@ -124,7 +130,6 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                     .get()
                     .build();
             try {
-                Log.i("ssssssssssssss", "222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222");
                 Call call = client.newCall(request);
 
                 call.enqueue(new Callback() {
@@ -133,25 +138,25 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                         //TODO 请求失败处理
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
                         //TODO 请求成功处理
                         // 获取响应体的json串
                         String jsonData = response.body().string();
+                        Log.i("获取草稿箱", jsonData);
                         // 解析json串到自己封装的状态
-                        Log.i("ssssssssssssss", "4444444444444444444444444444444444444444444444444444444444444444444444444");
                         SavePictureBean data;
                         data = JSON.parseObject(jsonData, SavePictureBean.class);
-                        list = data.getData().getRecords();
-//                       Log.i("ssssssssssssss",JSON.toJSONString(list));
-                        view.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
-                                Log.i("ssssssssssssss", JSON.toJSONString(list));
-
-                            }
-                        });
+                        if (data.getCode() == 200 && data.getData() != null) {
+                            list = data.getData().getRecords();
+                            view.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(list));
+                                }
+                            });
+                        }
 
 
                     }
@@ -169,66 +174,6 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
      */
 
     //TODO 取消和关注接口
-    private void goFcous(String key, int str) {
-
-        new Thread(() -> {
-            String url = null;
-            switch (str) {
-                case 1:
-                    url = "http://47.107.52.7:88/member/photo/focus?focusUserId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("关注", url);
-                    break;
-                case 2:
-                    url = "http://47.107.52.7:88/member/photo/focus/cancel?focusUserId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("取消关注", url);
-
-                    break;
-                case 3:
-                    url = "http://47.107.52.7:88/member/photo/collect?shareId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("收藏", url);
-                    break;
-                case 4:
-                    url = "http://47.107.52.7:88/member/photo/like?shareId=" + key + "&userId=" + UserData.getUserid();
-                    Log.d("点赞", url);
-
-                    break;
-                default:
-            }
-
-            // 请求头
-            Headers headers = new Headers.Builder()
-                    .add("appId", appid)
-                    .add("appSecret", appsecret)
-                    .add("Accept", "application/json, text/plain, */*")
-                    .build();
-            //请求组合创建
-            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-            Request request = new Request.Builder()
-                    .url(url)
-                    // 将请求头加至请求中
-                    .headers(headers)
-                    .post(RequestBody.create(MEDIA_TYPE_JSON, ""))
-                    .build();
-            try {
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, IOException e) {
-
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, Response response) throws IOException {
-
-                    }
-                });
-
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-
-            }
-        }).start();
-    }
 
     /**
      * http响应体的封装协议
@@ -321,12 +266,13 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
                             final String ARTICLE = "article";
                             Intent intent = new Intent(getContext(), DraftDetailsActivity.class);
 //                            UserData.setSavePictureData(holder.mItem);
-                            String[] article = new String[] { holder.mItem.getTitle(), holder.mItem.getContent() };
+                            String[] article = new String[]{holder.mItem.getTitle(), holder.mItem.getContent()};
                             intent.putExtra(ARTICLE, article);
+                            intent.putExtra("id", holder.mItem.getId());
                             intent.putStringArrayListExtra(IMAGES, images);
                             //发送单个草稿的内用
-                          //  releaseContent
-                          startActivity(intent);
+                            //  releaseContent
+                            startActivity(intent);
                         }
                     });
 
@@ -334,8 +280,34 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             });
             holder.mTvTitle.setText((holder.mItem.getTitle()));
             holder.mItem = mValues.get(position);
+            holder.mDele.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    holder.mCardView.setVisibility(View.GONE);
+                    System.out.println("这里是删除动态");
+                    AlertDialog alertDialog1 = new AlertDialog.Builder(view.getContext())
+                            .setTitle("提示")//标题
+                            .setMessage("确定删除动态")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    getDelet(holder.mItem.getId());
+                                    //取消收藏
+                                    holder.mDele.setVisibility(View.GONE);
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
+                                }
+                            })
+                            .create();
+                    alertDialog1.show();
 
+                }
+            });
 
         }
 
@@ -353,10 +325,10 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             public final ImageView mSubscribe;
             public final ImageView mFav;
             public SavePictureBean.Data.Records mItem;
-
+            private final ImageView mDele;
             public ViewHolder(FragmentItemBinding binding) {
                 super(binding.getRoot());
-
+                mDele = binding.delete;
                 discoverImage = binding.discoverImageItem;
                 mTvTitle = binding.tvTitle;
                 mAccessImage = binding.accessImg;
@@ -367,5 +339,74 @@ public static final String MESSAGE_STRING = "com.glriverside.xgqin.code04.MESSAG
             }
 
         }
+    }
+
+
+
+    private void getDelet(String shareId){
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+                // 获取响应体的json串
+                String body;
+                System.out.println(body = response.body().string());
+
+                PictureMoreBean data;
+                data = JSON.parseObject(body, PictureMoreBean.class);
+                if (data.getCode() == 200) {
+
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toasty.success(view.getContext(), "删除动态成功，请刷新页面查看结果", Toast.LENGTH_SHORT, true).show();
+                        }
+                    });
+
+                } else {
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toasty.error(view.getContext(), data.getMsg(), Toast.LENGTH_SHORT, true).show();
+                        }
+                    });
+                }
+
+                // 解析json串到自己封装的状态sha
+
+            }
+        };
+        new Thread(() -> {
+
+            String url = "http://47.107.52.7:88/member/photo/share/delete?shareId="+shareId+"&userId="+UserData.getUserid();
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, ""))
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            }catch (NetworkOnMainThreadException ex){
+                ex.printStackTrace();
+            }
+        }).start();
     }
 }

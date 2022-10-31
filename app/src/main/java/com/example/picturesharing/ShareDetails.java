@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 import com.example.picturesharing.adapter.CommentAdapter;
 import com.example.picturesharing.adapter.ImageTitleAdapter;
 import com.example.picturesharing.placeholder.PictureMoreBean;
+import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.Conmment1Bean;
 import com.example.picturesharing.pojo.DataBean;
 import com.example.picturesharing.pojo.User;
@@ -41,8 +42,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -96,7 +99,7 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
 
         button = findViewById(R.id.sendComment);
         banner = findViewById(R.id.banner);
-        editText = findViewById(R.id.Edit_Comment);
+        editText = findViewById(R.id.edit_comment);
         // 设置 Adapter
         banner.setAdapter(new ImageTitleAdapter(DataBean.getTestData3()));
         // 图片轮播指示器
@@ -114,8 +117,10 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postComment(editText.getText().toString());
-                getComment();
+                postComment1(editText.getText().toString());
+//                postComment(editText.getText().toString());//发表品论
+
+                editText.setText("");
             }
         });
 
@@ -155,10 +160,9 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
                         textView.setText("" + data.getData().getCollectNum());
                         textView = findViewById(R.id.supportNum);
                         textView.setText("" + data.getData().getLikeNum());
-                        if(data.getData().isHasFocus()){
+                        if (data.getData().isHasFocus()) {
                             support.setText("已关注");
-                        }
-                        else {
+                        } else {
                             support.setText("+ 关注");
                         }
                         Long timeGetTime = Long.parseLong(data.getData().getCreateTime());//获取事件用户的时间错
@@ -179,8 +183,8 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
         };
 
         new Thread(() -> {
-            System.out.println("sssssssssssssssssssssssssssssssssssssssssssssss" + UserData.getPictureId());
             // url路径
+
             String url = "http://47.107.52.7:88/member/photo/share/detail?shareId=" + UserData.getPictureId() + "&userId=" + UserData.getUserid();
 
             // 请求头
@@ -207,6 +211,65 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
+
+    //post同步请求
+    public void postComment1(String comment) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "http://47.107.52.7:88/member/photo/comment/first";
+                OkHttpClient okHttpClient = new OkHttpClient();
+                //post请求规定,把参数放在请求体里面,用form表单的方式来添加我们的请求体
+                // 请求体
+                // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+                Map<String, Object> bodyMap = new HashMap<>();
+                bodyMap.put("shareId", UserData.getPictureId());
+                bodyMap.put("userName", UserData.getUserName());
+                bodyMap.put("userId", UserData.getUserid());
+                bodyMap.put("content", comment);
+                // 将Map转换为字符串类型加入请求体中
+                String body = JSON.toJSONString(bodyMap);
+                MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+                //请求组合创建
+                Headers headers = new Headers.Builder()
+                        .add("Accept", "application/json, text/plain, */*")
+                        .add("appId", UserData.appId)
+                        .add("appSecret", UserData.appSecret)
+                        .add("Content-Type", "application/json")
+                        .build();
+                Request request = new Request.Builder()
+                        .url(url)
+                        // 将请求头加至请求中
+                        .headers(headers)
+                        .post(RequestBody.create(MEDIA_TYPE_JSON, body))
+                        .build();
+                Call call = okHttpClient.newCall(request);
+                try {
+                    Response response = call.execute();
+                    String body1;
+                    Log.i("TAG", "postSync:" + (body1 = response.body().string()));
+
+                    Log.d("发表评论成功", body1);
+                    PlaceholderContent data = JSON.parseObject(body1, PlaceholderContent.class);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (data.getCode() == 200) {
+                                Toasty.success(ShareDetails.this, "发布成功!", Toast.LENGTH_SHORT, true).show();
+                                getComment();//获取评论
+                            } else {
+                                Toast.makeText(ShareDetails.this, "发布失败", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
     //发表品论
     private void postComment(String comment) {
 
@@ -220,17 +283,20 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(@NonNull Call call, Response response) throws IOException {
                 //TODO 请求成功处理
-                Type jsonType = new TypeToken<ResponseBody<Object>>() {
-                }.getType();
                 // 获取响应体的json串
                 String body = response.body().string();
-                ResponseBody data = JSON.parseObject(body, ResponseBody.class);
-                if (data.getCode() == 200 && data.getData() != null) {
-                    Toast.makeText(ShareDetails.this, "发布成功", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ShareDetails.this, "发布失败", Toast.LENGTH_SHORT).show();
-                }
                 Log.d("发表评论成功", body);
+                PlaceholderContent data = JSON.parseObject(body, PlaceholderContent.class);
+                Log.d("发表评论成功2", "" + data.getCode());
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (data.getCode() == 200) {
+                            Toasty.success(ShareDetails.this, "发布成功!", Toast.LENGTH_SHORT, true).show();
+                        } else {
+                            Toast.makeText(ShareDetails.this, "发布失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 // 解析json串到自己封装的状态 JSON.parseObject(jsonData, PlaceholderContent.class);
 
 
@@ -310,7 +376,7 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
                         recyclerView.setAdapter(new CommentAdapter(list, ShareDetails.this));
                         recyclerView.setLayoutManager(new LinearLayoutManager(ShareDetails.this));
                         //上面是布局管理器，没有就显示不出来。
-                        System.out.println("出来");
+
                     });
                 }
             }//处理数据
@@ -347,44 +413,44 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
     //点击按钮事件
     @Override
     public void onClick(View v) {
-        System.out.println("检测data"+JSON.toJSONString(data));
-        ShareDetails.this.runOnUiThread(() ->{
+        System.out.println("检测data" + JSON.toJSONString(data));
+        ShareDetails.this.runOnUiThread(() -> {
             switch (v.getId()) {
                 //收藏
-                case R.id.itemFav:{
+                case R.id.itemFav: {
                     textView = findViewById(R.id.FavNum);
                     if (data.getData().isHasCollect()) {
 
                         System.out.println("这里是取消收藏");
-                        getPicture(UserData.getPictureId(),2);
-                        data.getData().setCollectNum(data.getData().getCollectNum()-1);//设置收藏数减一
+                        getPicture(UserData.getPictureId(), 2);
+                        data.getData().setCollectNum(data.getData().getCollectNum() - 1);//设置收藏数减一
 
-                        textView.setText(""+data.getData().getCollectNum());
+                        textView.setText("" + data.getData().getCollectNum());
                         //取消收藏
-                        data.getData().setHasCollect(! data.getData().isHasCollect());
+                        data.getData().setHasCollect(!data.getData().isHasCollect());
 
                     } else {
                         //收藏
                         System.out.println("这里收藏");
                         goFcous(UserData.getPictureId(), 3);
-                        data.getData().setCollectNum((data.getData().getCollectNum()+1));//设置收藏数加一
+                        data.getData().setCollectNum((data.getData().getCollectNum() + 1));//设置收藏数加一
 
-                        textView.setText(""+data.getData().getCollectNum());
+                        textView.setText("" + data.getData().getCollectNum());
                         //取消收藏
-                        data.getData().setHasCollect(! data.getData().isHasCollect());
+                        data.getData().setHasCollect(!data.getData().isHasCollect());
                     }
                 }
                 break;
                 //点赞
-                case R.id.itemSupported:{
+                case R.id.itemSupported: {
                     textView = findViewById(R.id.supportNum);
                     if (data.getData().isHasLike()) {
 
                         System.out.println("这里是取消点赞");
-                        getPicture(UserData.getPictureId(),1);
-                        data.getData().setLikeNum(data.getData().getLikeNum()-1);//设置收藏数减一
+                        getPicture(UserData.getPictureId(), 1);
+                        data.getData().setLikeNum(data.getData().getLikeNum() - 1);//设置收藏数减一
 
-                        textView.setText(""+data.getData().getLikeNum());
+                        textView.setText("" + data.getData().getLikeNum());
                         //设置取消点赞标志
                         data.getData().setHasLike(!data.getData().isHasLike());
 
@@ -392,16 +458,16 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
                         //收藏
                         System.out.println("这里点赞");
                         goFcous(UserData.getPictureId(), 4);
-                        data.getData().setLikeNum(data.getData().getLikeNum()+1);//设置收藏数加一
+                        data.getData().setLikeNum(data.getData().getLikeNum() + 1);//设置收藏数加一
 
-                        textView.setText(""+data.getData().getLikeNum());
+                        textView.setText("" + data.getData().getLikeNum());
                         //取消收藏
-                        data.getData().setHasLike(! data.getData().isHasLike());
+                        data.getData().setHasLike(!data.getData().isHasLike());
                     }
                 }
                 break;
 //TODO 关注
-                case R.id.support2:{
+                case R.id.support2: {
 
                     if (data.getData().isHasFocus()) {
 
@@ -416,11 +482,12 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
                         goFcous(data.getData().getPUserId(), 1);
 
                         //取消收藏
-                        data.getData().setHasFocus(! data.getData().isHasFocus());
+                        data.getData().setHasFocus(!data.getData().isHasFocus());
                     }
                 }
                 break;
-                default:break;
+                default:
+                    break;
             }
         });
 
@@ -484,7 +551,8 @@ public class ShareDetails extends AppCompatActivity implements View.OnClickListe
 
                     break;
 
-                default: break;
+                default:
+                    break;
             }
 
             // 请求头

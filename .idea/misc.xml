@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1525" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/add_to_subscribe.xml" value="0.1525" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/button_tag.xml" value="0.1" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/edit_button.xml" value="0.1525" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.1525" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/ic_baseline_add_circle_24.xml" value="0.1525" />
@@ -21,12 +22,14 @@
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/radius.xml" value="0.1525" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/shape_normal.xml" value="0.1525" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/shape_selected.xml" value="0.1525" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/drawable/tag_selected.xml" value="0.1" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_about_us.xml" value="0.23020833333333332" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_main.xml" value="0.11150353178607467" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_my_settings.xml" value="0.1" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/activity_share_details.xml" value="0.1" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/card_view.xml" value="0.23020833333333332" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_blank.xml" value="0.23020833333333332" />
+        <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_dashboard.xml" value="0.1" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_home.xml" value="0.23020833333333332" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_item.xml" value="0.23020833333333332" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/fragment_item_list.xml" value="0.23020833333333332" />
@@ -38,6 +41,7 @@
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/modify_personal_info.xml" value="0.264" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/layout/register.xml" value="0.23020833333333332" />
         <entry key="..\:/Coding_tools/Code/Android/PictureSharing/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1525" />
+        <entry key="..\:/Users/xxh/Desktop/zzhil/2/222/pictureSharing/app/src/main/res/layout/activity_share_details.xml" value="0.17604166666666668" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/drawable/add_to_subscribe.xml" value="0.141" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.141" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/drawable/ic_baseline_add_circle_24.xml" value="0.141" />
@@ -51,13 +55,13 @@
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/activity_main.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/activity_my_settings.xml" value="0.17395833333333333" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/activity_picture.xml" value="0.24909420289855072" />
-        <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/activity_share_details.xml" value="0.5" />
+        <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/activity_share_details.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/card_view.xml" value="0.3" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/comments_list_item.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_blank.xml" value="0.14166666666666666" />
-        <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_dashboard.xml" value="0.24909420289855072" />
+        <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_dashboard.xml" value="0.5" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_home.xml" value="0.3" />
-        <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_item.xml" value="0.1902654867256637" />
+        <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_item.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_item_list.xml" value="0.3" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/fragment_notifications.xml" value="0.26856884057971014" />
         <entry key="..\:/Users/xxh/Desktop/zzhil/2/pictureSharing/app/src/main/res/layout/image_title.xml" value="0.14010416666666667" />

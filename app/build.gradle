@@ -32,6 +32,8 @@ android {
 }
 
 dependencies {
+    // LoadingDialog
+    implementation 'com.github.ForgetAll:LoadingDialog:v1.1.2'
     // Toast 用户提示
     implementation 'com.github.GrenderG:Toasty:1.5.2'
     // material-dialog

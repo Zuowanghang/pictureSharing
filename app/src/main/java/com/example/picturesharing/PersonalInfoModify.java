@@ -2,10 +2,14 @@ package com.example.picturesharing;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.View;
@@ -25,9 +29,13 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.donkingliang.imageselector.utils.ImageSelector;
+import com.example.picturesharing.MyToast.MyApplication;
+import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.PostImage;
 import com.example.picturesharing.pojo.UserData;
 import com.example.picturesharing.pojo.UserInfo;
+import com.example.picturesharing.ui.notifications.MyPostPictureFragment;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -61,6 +70,8 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
     private TextView sex;
     private TextView introduction;
     private String path;
+    LoadingDialog ld;
+    private int n;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,6 +112,12 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
             // 如果个人主页不能刷新数据，可以选择在这里将 UserInfo 对象设置出去
             finish();
         });
+        if(UserData.sex == 0){
+            sex.setText("女");
+        }else {
+            sex.setText("男");
+        }
+
     }
 
     @Override
@@ -171,6 +188,7 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
             }
 
             case R.id.modify_sex: {
+
                 final String[] items = {"男", "女",};
                 final int[] yourChoice = {-1};
                 AlertDialog.Builder singleChoiceDialog =
@@ -208,7 +226,17 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
                 if (path == null) {
                     Toast.makeText(PersonalInfoModify.this, "请选择头像", Toast.LENGTH_SHORT).show();
                 } else {
-                    postPicture(path, name.getText().toString(), sex.getText().toString(), introduction.getText().toString());
+                    if (!name.getText().toString().equals("") && !sex.getText().toString().equals("") && !introduction.getText().toString().equals("")) {
+                        ld = new LoadingDialog(this);
+                        ld.setLoadingText("保存上传中")
+                                .setSuccessText("上传成功")//显示加载成功时的文字
+                                .setFailedText("上传失败")
+                                .setInterceptBack(true)
+                                .show();
+                        postPicture(path, name.getText().toString(), sex.getText().toString(), introduction.getText().toString());
+                    } else {
+                        Toast.makeText(MyApplication.getContext(), "信息项不能为空，请重新填写", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
 
@@ -221,13 +249,13 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
     private void post(String path, String mName, String mSex, String mIntroduction) {
 
         new Thread(() -> {
-            int n = 0;
+             n = 0;
             switch (mSex) {
                 case "男":
-                    n = 0;
+                    n = 1;
                     break;
                 case "女":
-                    n = 1;
+                    n = 0;
                 default:
                     break;
             }
@@ -289,8 +317,45 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
             //TODO 请求成功处理
 
             // 获取响应体的json串
-            String body = response.body().string();
-            Log.d("info", body);
+            String jsonData = response.body().string();
+            Log.i("我的动态", jsonData);
+            // 解析json串到自己封装的状态
+            PlaceholderContent data;
+            data = JSON.parseObject(jsonData, PlaceholderContent.class);
+            if (data.getCode() == 200) {
+                PersonalInfoModify.this.runOnUiThread(() -> {
+                    ld.loadSuccess();
+                    UserData.setUserName(name.getText().toString());
+                    UserData.introduce=introduction.getText().toString();
+                 if(n == 0){
+                     UserData.sex = 0;
+                 }else {
+                     UserData.sex = 1;
+                 }
+
+                });
+
+            }else {
+
+                PersonalInfoModify.this.runOnUiThread(() -> {
+                    ld.loadFailed();
+
+                });
+            }
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Looper.prepare();
+//
+//                        if(data.getCode() == 200 ){
+//                            Toasty.success(MyApplication.getContext(), "图片保存成功!", Toast.LENGTH_SHORT, true).show();
+//
+//                        }else {
+//                            Toasty.error(MyApplication.getContext(), "图片保存失败!", Toast.LENGTH_SHORT, true).show();
+//                        }
+//                        Looper.loop();
+//                    }
+//                }).start();
 
         }
 
@@ -410,5 +475,29 @@ public class PersonalInfoModify extends AppCompatActivity implements View.OnClic
                     ", data=" + data +
                     '}';
         }
+    }
+
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MyApplication.getContext());
+        builder.setTitle("提示");
+        builder.setMessage("确定更改个人资料");
+        builder.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        builder.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 }

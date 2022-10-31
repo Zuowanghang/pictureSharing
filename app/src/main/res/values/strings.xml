@@ -58,4 +58,9 @@
     <string name="comments">评论</string>
     <string name="addComment">发表评论…</string>
     <string name="send">发送</string>
+    <string name="tag">标签</string>
+    <string name="original">原创</string>
+    <string name="non_original">非原创</string>
+    <string name="non_commerce">禁商用</string>
+    <string name="non_copy">禁临摹</string>
 </resources>

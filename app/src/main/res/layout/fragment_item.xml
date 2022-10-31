@@ -6,6 +6,7 @@
     android:background="@color/white"
     android:padding="8dp"
     android:layout_marginStart="4dp"
+    android:id="@+id/farther"
     android:layout_marginEnd="4dp"
     android:layout_marginBottom="5dp"
     app:cardCornerRadius="10dp">
@@ -90,6 +91,16 @@
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/support"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/delete"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/delete"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/collect"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
