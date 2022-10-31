@@ -119,7 +119,7 @@ public class ItemFragment extends Fragment {
         new Thread(() -> {
             // url路径
             String userid = "0";
-            String url = "http://47.107.52.7:88/member/photo/share?current=1&size=40&userId=0" + UserData.getUserid();
+            String url = "http://47.107.52.7:88/member/photo/share?current=1&size=40&userId=" + UserData.getUserid();
             // 请求头
             Headers headers = new Headers.Builder()
                     .add("appId", UserData.getAppId())
@@ -380,6 +380,12 @@ public class ItemFragment extends Fragment {
 
             public ViewHolder(FragmentItemBinding binding) {
                 super(binding.getRoot());
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.delete.setVisibility(View.GONE);
+                    }
+                });
 
                 discoverImage = binding.discoverImageItem;
                 mTvTitle = binding.tvTitle;
@@ -455,6 +461,7 @@ public class ItemFragment extends Fragment {
 
                     @Override
                     public void onResponse(@NonNull Call call, Response response) throws IOException {
+                        System.out.println(response.body().string());
 
                     }
                 });

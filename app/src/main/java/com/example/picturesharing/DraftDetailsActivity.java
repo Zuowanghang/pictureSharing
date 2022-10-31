@@ -2,9 +2,13 @@ package com.example.picturesharing;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.View;
@@ -20,17 +24,29 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.donkingliang.imageselector.utils.ImageSelector;
+import com.example.picturesharing.MyToast.FileUtils;
+import com.example.picturesharing.MyToast.MyApplication;
+import com.example.picturesharing.MyToast.ToastUtils;
 import com.example.picturesharing.adapter.ImageAdapter;
+import com.example.picturesharing.placeholder.PlaceholderContent;
 import com.example.picturesharing.pojo.PostImage;
+import com.example.picturesharing.pojo.ReleaseContent;
 import com.example.picturesharing.pojo.UserData;
 
 import com.example.picturesharing.util.ResponseBody;
 import com.google.gson.reflect.TypeToken;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 
 import java.io.File;
@@ -56,7 +72,8 @@ public class DraftDetailsActivity extends AppCompatActivity implements View.OnCl
     private static final int REQUEST_CODE = 0x00000011;
     private static final int PERMISSION_WRITE_EXTERNAL_REQUEST_CODE = 0x00000012;
     private String message;
-    private ArrayList<String> selected;
+    private ArrayList<String> selected = new ArrayList<>();
+    private ArrayList<String> mySelected;
     private String strTitle;
     private String strContent;
     private RecyclerView recyclerView;
@@ -75,6 +92,8 @@ public class DraftDetailsActivity extends AppCompatActivity implements View.OnCl
 private  String id;
     // 返回上一级的图片按钮
     private ImageView backToPersonal;
+    private int mm;
+    private LoadingDialog ld;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +101,8 @@ private  String id;
         setContentView(R.layout.activity_draft_details);
         Intent i = getIntent();
         //获取传递的
-        selected = i.getStringArrayListExtra("images");
+        mySelected = i.getStringArrayListExtra("images");
         String[] strs = i.getStringArrayExtra("article");
-        imageCode = i.getStringExtra("imageCode");
         tv_Title = findViewById(R.id.draftArticleTitle);
         tv_Content = findViewById(R.id.draft_article_content);
         id = i.getStringExtra("id");
@@ -116,7 +134,18 @@ private  String id;
         recyclerView = findViewById(R.id.draftRlv);
         adapter = new ImageAdapter(DraftDetailsActivity.this);
         adapter.setOnImageDeleteListener(this::removeData);
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + selected);
+//        for (int n = 0; n < mySelected.size();n++){
+//            Log.i("dddddddddddddddddddddddddddddddddddddddd", mySelected.get(n));
+//        }
+
+        selected = saveImgToLocal(MyApplication.getContext(),mySelected);
+
+
+
+
+
+
+
         adapter.setImages(selected);
         recyclerView.setLayoutManager(new GridLayoutManager(DraftDetailsActivity.this, 3));
         recyclerView.setAdapter(adapter);
@@ -195,60 +224,145 @@ private  String id;
     public void onClick(View v) {
         mContent =  tv_Content.getText().toString();
         mTitle = tv_Title.getText().toString();
-        switch (v.getId()) {
-            case R.id.backToDraft: {
-                finish();
-                break;
-            }
-            case R.id.draftImageSelector: {
-                ImageSelector.builder()
-                        .useCamera(true) // 设置是否使用拍照
-                        .setSingle(false)  //设置是否单选
-                        .canPreview(true) //是否点击放大图片查看,，默认为true
-                        .setMaxSelectCount(9) // 图片的最大选择数量，小于等于0时，不限数量。
-                        .start(this, REQUEST_CODE); // 打开相册
-                break;
-            }
-            case R.id.clearImage: {
-                // 点击取消按钮将页面中所有数据全部清除
-                clearData();
-                break;
-            }
-            case R.id.deleteDraft: {
+        try {
+            switch (v.getId()) {
+                case R.id.backToDraft: {
+                    finish();
+                    break;
+                }
+                case R.id.draftImageSelector: {
+                    ImageSelector.builder()
+                            .useCamera(true) // 设置是否使用拍照
+                            .setSingle(false)  //设置是否单选
+                            .canPreview(true) //是否点击放大图片查看,，默认为true
+                            .setMaxSelectCount(9) // 图片的最大选择数量，小于等于0时，不限数量。
+                            .start(this, REQUEST_CODE); // 打开相册
+                    break;
+                }
+                case R.id.clearImage: {
+                    android.app.AlertDialog alertDialog1 = new android.app.AlertDialog.Builder(getWindow().getContext())
+                            .setTitle("提示")//标题
+                            .setMessage("确定清空草稿？")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                getDelet(id);
-                System.out.println("删除");
-                clearData();
-                break;
-            }
-            case R.id.releaseBtn: {
-                // 发布按钮
-                postSaved();
-                getDelet(id);
-//               postPicture(0,mTitle,mContent);
-                clearData();
-                break;
-            }
-            case R.id.archiveImage: {
-                // 将修改过的或者没有修改的图文分享草稿再次存为草稿
-                archiveAgain();
-                clearData();
+//                                    clearData();
 
-                break;
+
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .create();
+                    alertDialog1.show();
+                    // 点击取消按钮将页面中所有数据全部清除
+
+                    break;
+                }
+                case R.id.deleteDraft: {
+                    AlertDialog alertDialog1 = new AlertDialog.Builder(getWindow().getContext())
+                            .setTitle("提示")//标题
+                            .setMessage("确定取消删除该草稿")//内容
+                            .setIcon(R.mipmap.ic_launcher)//图标
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    getDelet(id);
+
+                                    clearData();
+                                    System.out.println("删除");
+                                    //取消收藏
+
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .create();
+                    alertDialog1.show();
+
+                    break;
+                }
+                case R.id.releaseBtn: {
+                    // 发布按钮
+                    if (isOk()) {
+
+                        release();
+                        getDelet(id);
+
+                    } else {
+                        Toast.makeText(MyApplication.getContext(), "信息项不能为空，请填写信息再发布", Toast.LENGTH_SHORT).show();
+                    }
+
+                    break;
+                }
+                case R.id.archiveImage: {
+                    // 将修改过的或者没有修改的图文分享草稿再次存为草稿
+                    if (isOk()) {
+                        saveAsDraft();
+                        getDelet(id);
+                        clearData();
+                        ReleaseContent.savedData = null;
+                    } else {
+                        Toast.makeText(MyApplication.getContext(), "信息项不能为空，请填写信息再保存", Toast.LENGTH_SHORT).show();
+                    }
+
+                    break;
+                }
+                default: break;
             }
-            default: break;
+        }catch (Exception e){
+            System.out.println("出错了");
         }
-    }
 
+
+    }
+    private boolean isOk() {
+
+        if ( !tv_Title.getText().toString().equals("") && !tv_Content.getText().toString().equals("") && selected != null) {
+            return true;
+        } else return false;
+    }
     // 再次存档
     private void archiveAgain() {
         getDelet(id);
         postPicture(1,mTitle,mContent);
 
     }
+    private void saveAsDraft() {
+        System.out.println("保存点击事件");
+        System.out.println(tv_Title.getText().toString());
+        ld = new LoadingDialog(this);
+        ld.setLoadingText("正在保存，请耐心等待。")
+                .setSuccessText("保存成功")//显示加载成功时的文字
+                .setInterceptBack(true)
+                .show();
+        postPicture(1, tv_Title.getText().toString(), tv_Title.getText().toString());
+
+
+    }
+
+    private void release() {
+
+        ld = new LoadingDialog(getWindow().getContext());
+        ld.setLoadingText("正在上传，请耐心等待。")
+                .setSuccessText("上传成功")//显示加载成功时的文字
+                .setInterceptBack(true)
+                .show();
+        postPicture(0, tv_Title.getText().toString(), tv_Content.getText().toString());
 
 
 
+    }
 
     /**
      * 将草稿转为发布状态，
@@ -282,19 +396,29 @@ private  String id;
                 //TODO 请求成功处理
 
                 // 获取响应体的json串
+                // 获取响应体的json串
                 String body = response.body().string();
-                ResponseBody data = JSON.parseObject(body,ResponseBody.class);
-                Log.d("草稿相发布", body);
+                Log.d("图片上传", body);
+                // 解析json串到自己封装的状态
+// TODO 判断获取数据成功不成功
+                PlaceholderContent data;
+                data = JSON.parseObject(body, PlaceholderContent.class);
+                System.out.println("图片上传"+data.getCode());
+                Log.d("图片上传", data.toString());
 
-                runOnUiThread(new Runnable() {
+                new Thread(new Runnable() {
+                    @Override
                     public void run() {
+                        Looper.prepare();
+
                         if(data.getCode() == 200 ){
-                            Toasty.success(DraftDetailsActivity.this, "Success!", Toast.LENGTH_SHORT, true).show();
+                            Toasty.success(MyApplication.getContext(), "图片上传成功!", Toast.LENGTH_SHORT, true).show();
                         }else {
-                            Toast.makeText(DraftDetailsActivity.this, "发布失败", Toast.LENGTH_SHORT).show();
+                            Toasty.error(MyApplication.getContext(), "图片上传失败!", Toast.LENGTH_SHORT, true).show();
                         }
+                        Looper.loop();
                     }
-                });
+                }).start();
 
 
 
@@ -316,6 +440,7 @@ private  String id;
 
             // 请求体
             // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+            System.out.println("id = " + id);
             Map<String, Object> bodyMap = new HashMap<>();
             bodyMap.put("content", tv_Content.getText().toString());
             bodyMap.put("id", id);
@@ -347,217 +472,14 @@ private  String id;
 
     }
 
-
     //n==0，直接发布图片到动态；
     //n == 1 ,保存到草稿相
-    private void postPicture(int n,String title, String content) {
-        Callback callback = new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, IOException e) {
-                //TODO 请求失败处理
-                e.printStackTrace();
-            }
-            @Override
-            public void onResponse(@NonNull Call call, Response response) throws IOException {
-                //TODO 请求成功处理
-                Type jsonType = new TypeToken<com.example.picturesharing.util.ResponseBody<Object>>() {
-                }.getType();
-                // 获取响应体的json串
-                //
-                String jsonData = response.body().string();
-                Log.d("图片标题内容", jsonData);
-                // 解析json串到自己封装的状态
-                PostImage data;
-                data = JSON.parseObject(jsonData, PostImage.class);
-                //上传图片分享，包括内容
-                if(data.getCode() == 200){
-                    if (n == 0) {
-                        post(data.getData().getImageCode(),title,content);
-                    } else {
-                        savePost(data.getData().getImageCode(),title,content);
-                    }
-                }else {
-                    System.out.println("先上传图片失败");
-                }
 
-            }
-        };
-
-        new Thread(() -> {
-            List<String> filePaths = selected;
-            // url路径
-            String url = "http://47.107.52.7:88/member/photo/image/upload";
-            Headers headers = new Headers.Builder()
-                    .add("appId", UserData.appId)
-                    .add("appSecret", UserData.appSecret)
-                    .add("Accept", "application/json, text/plain, */*")
-                    .build();
-
-
-            MediaType mediaType = MediaType.parse("multipart/form-data");//设置类型，类型为八位字节流
-            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-            for (int i = 0; i < filePaths.size(); i++) { //对文件进行遍历
-                String fname = filePaths.get(i);
-
-                File tempfile = new File(fname);
-                //根据文件的后缀名，获得文件类型
-                builder.setType(MultipartBody.FORM)
-
-                        .addFormDataPart( //给Builder添加上传的文件
-                                "fileList",  //请求的名字
-                                tempfile.getName(), //文件的文字，服务器端用来解析的
-                                RequestBody.create(MediaType.parse("multipart/form-data"), tempfile)//创建RequestBody，把上传的文件放入
-                        );
-            }
-            MultipartBody requestBody = builder.build();
-            Request request = new Request.Builder()
-                    .headers(headers)
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-            try {
-                OkHttpClient client = new OkHttpClient();
-                //发起请求，传入callback进行回调
-                client.newCall(request).enqueue(callback);
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-            }
-        }).start();
-    }
 
     //上传图片获取图片的imageCode和标题和内容
-    private void post(String imageCode ,String title, String content) {
 
-        Callback callback = new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, IOException e) {
-                //TODO 请求失败处理
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, Response response) throws IOException {
-                //TODO 请求成功处理
-                Type jsonType = new TypeToken<com.example.picturesharing.util.ResponseBody<Object>>() {
-                }.getType();
-                // 获取响应体的json串
-                String body = response.body().string();
-                Log.d("图片上传", body);
-                // 解析json串到自己封装的状态
-
-                com.example.picturesharing.util.ResponseBody<Object> dataResponseBody = JSON.parseObject(body, jsonType);
-                Log.d("图片上传", dataResponseBody.toString());
-            }
-        };
-
-        new Thread(() -> {
-
-            // url路径
-            String url = "http://47.107.52.7:88/member/photo/share/add";
-
-            // 请求头
-            Headers headers = new Headers.Builder()
-                    .add("Accept", "application/json, text/plain, */*")
-                    .add("appId", UserData.appId)
-                    .add("appSecret", UserData.appSecret)
-                    .add("Content-Type", "application/json")
-                    .build();
-
-            // 请求体
-            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
-            Map<String, Object> bodyMap = new HashMap<>();
-            System.out.println("请求里面是否成功"+title+content);
-            bodyMap.put("imageCode", imageCode);
-            bodyMap.put("pUserId", UserData.getUserid());
-            bodyMap.put("title", title);
-            bodyMap.put("content", content);
-            // 将Map转换为字符串类型加入请求体中
-            String body = JSON.toJSONString(bodyMap);
-            System.out.println("图片内容"+body);
-            Log.i("ttttttttttttttttttttttttttttttttttttttttttttttttttttt", body);
-            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-
-            //请求组合创建
-            Request request = new Request.Builder()
-                    .url(url)
-                    // 将请求头加至请求中
-                    .headers(headers)
-                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
-                    .build();
-            try {
-                OkHttpClient client = new OkHttpClient();
-                //发起请求，传入callback进行回调
-                client.newCall(request).enqueue(callback);
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-            }
-        }).start();
-    }
 
     //保存图片分享
-    private void savePost(String imageCode,String title, String content) {
-
-        Callback callback = new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, IOException e) {
-                //TODO 请求失败处理
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, Response response) throws IOException {
-                //TODO 请求成功处理
-                Type jsonType = new TypeToken<com.example.picturesharing.util.ResponseBody<Object>>() {
-                }.getType();
-                // 获取响应体的json串
-
-                String body = response.body().string();
-                Log.d("保存的草稿内容", body);
-                // 解析json串到自己封装的状态
-
-
-            }
-        };
-
-        new Thread(() -> {
-
-            // url路径
-            String url = "http://47.107.52.7:88/member/photo/share/save";
-
-            // 请求头
-            Headers headers = new Headers.Builder()
-                    .add("appId", UserData.appId)
-                    .add("appSecret", UserData.appSecret)
-                    .add("Accept", "application/json, text/plain, */*")
-                    .build();
-
-            // 请求体
-            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
-            Map<String, Object> bodyMap = new HashMap<>();
-            bodyMap.put("content", content);
-            bodyMap.put("imageCode", imageCode);
-            bodyMap.put("pUserId", UserData.getUserid());
-            bodyMap.put("title", title);
-            // 将Map转换为字符串类型加入请求体中
-            String body = JSON.toJSONString(bodyMap);
-            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-
-            //请求组合创建
-            Request request = new Request.Builder()
-                    .url(url)
-                    // 将请求头加至请求中
-                    .headers(headers)
-                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
-                    .build();
-            try {
-                OkHttpClient client = new OkHttpClient();
-                //发起请求，传入callback进行回调
-                client.newCall(request).enqueue(callback);
-            } catch (NetworkOnMainThreadException ex) {
-                ex.printStackTrace();
-            }
-        }).start();
-    }
 
 //删除图片分享
     private void getDelet(String shareId){
@@ -611,9 +533,321 @@ private  String id;
      * 回调
      */
 
+    private ArrayList<String> saveImgToLocal(Context context, ArrayList<String> url) {
+         ArrayList<String> selected2 = new ArrayList<>();
+          mm = 0;
+        Log.i("图文件",""+url.size());
+        //如果是网络图片，抠图的结果，需要先保存到本地
+        for (int i = 0; i < url.size(); i++){
+            mm = i;
+            Log.i("TAG", i+"   saveImgToLocal: ="+url.get(i));
+            System.out.println("" + i+""+i  );
+            Glide.with(context)
+                    .downloadOnly()
+                    .load(url.get(i))
+                    .listener(new RequestListener<File>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
+                            Toast.makeText(context, "下载失败", Toast.LENGTH_SHORT).show();
+
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
+
+                            selected2.add(saveToAlbum(context, resource.getAbsolutePath(), mm));
+                            Log.i("图片下载成功，查看更改后的地址", saveToAlbum(context, resource.getAbsolutePath(),mm));
+                            return false;
+                        }
+                    })
+                    .preload();
+        }
+            return selected2;
+
+    }
+
+    private String saveToAlbum(Context context, String srcPath,int i) {
+        File oldFile =  new File(srcPath);
+        int n = srcPath.lastIndexOf(".");
+        String str1 = srcPath.substring(0,n);
+        str1 = str1+".jpg";
+        File newFile = new File(str1);
+        oldFile.renameTo(newFile);
+            Log.i(i+"更改时候成功的地址", "saveToAlbum: "+newFile.getAbsolutePath());
+            return  newFile.getAbsolutePath();
+
+    }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    private void postPicture(int n, String title, String content) {
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+
+                // 获取响应体的json串
+                //
+                String jsonData = response.body().string();
+                Log.d("图片标题内容", jsonData);
+                // 解析json串到自己封装的状态
+                PostImage data;
+                data = JSON.parseObject(jsonData, PostImage.class);
+                System.out.println();
+                //上传图片分享，包括内容
+                if(data.getCode() == 200){
+                    if (n == 0) {
+                        post(data.getData().getImageCode(), title, content);
+                    } else {
+                        savePost(data.getData().getImageCode(), title, content);
+                    }
+                }else {
+                    imageSelector.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ld.setFailedText("图片超过上传文件大小");
+                            ld.loadFailed();
+                        }
+                    });
+                }
+
+
+            }
+        };
+
+        new Thread(() -> {
+            List<String> filePaths = selected;
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/image/upload";
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+
+            MediaType mediaType = MediaType.parse("multipart/form-data");//设置类型，类型为八位字节流
+            MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            for (int i = 0; i < filePaths.size(); i++) { //对文件进行遍历
+                String fname = filePaths.get(i);
+                File tempfile = new File(fname);
+                //根据文件的后缀名，获得文件类型
+                builder.setType(MultipartBody.FORM)
+
+                        .addFormDataPart( //给Builder添加上传的文件
+                                "fileList",  //请求的名字
+                                tempfile.getName(), //文件的文字，服务器端用来解析的
+                                RequestBody.create(MediaType.parse("multipart/form-data"), tempfile)//创建RequestBody，把上传的文件放入
+                        );
+            }
+            MultipartBody requestBody = builder.build();
+            Request request = new Request.Builder()
+                    .headers(headers)
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+
+    //上传图片获取图片的imageCode （新增图片分享）
+    private void post(String imageCode, String title, String content) {
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+
+                //TODO 请求成功处理
+
+
+                // 获取响应体的json串
+                String body = response.body().string();
+                Log.d("图片上传", body);
+                // 解析json串到自己封装的状态
+// TODO 判断获取数据成功不成功
+                PlaceholderContent data;
+                data = JSON.parseObject(body, PlaceholderContent.class);
+                System.out.println("图片上传" + data.getCode());
+                Log.d("图片上传", data.toString());
+                imageSelector.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (data.getCode() == 200) {
+                            ld.loadSuccess();
+                            clearData();
+                        } else {
+                            ld.setFailedText("上传失败");
+                            ld.loadFailed();
+                        }
+                    }
+                });
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Looper.prepare();
+//
+//                        Looper.loop();
+//                    }
+//                }).start();
+
+
+            }
+        };
+
+        new Thread(() -> {
+
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/share/add";
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("Accept", "application/json, text/plain, */*")
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Content-Type", "application/json")
+                    .build();
+
+            // 请求体
+            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+            Map<String, Object> bodyMap = new HashMap<>();
+            System.out.println("请求里面是否成功" + title + content);
+            bodyMap.put("imageCode", imageCode);
+            bodyMap.put("pUserId", UserData.getUserid());
+            bodyMap.put("title", title);
+            bodyMap.put("content", content);
+            // 将Map转换为字符串类型加入请求体中
+            String body = JSON.toJSONString(bodyMap);
+            Log.i("ttttttttttttttttttttttttttttttttttttttttttttttttttttt", body);
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+
+    //保存图片分享
+    private void savePost(String imageCode, String title, String content) {
+
+        Callback callback = new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                //TODO 请求失败处理
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, Response response) throws IOException {
+                //TODO 请求成功处理
+
+                String body = response.body().string();
+                Log.d("保存的草稿内容", body);
+                PlaceholderContent data;
+                data = JSON.parseObject(body, PlaceholderContent.class);
+                imageSelector.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (data.getCode() == 200) {
+                            ld.loadSuccess();
+
+                        } else {
+                            ld.setFailedText("保存失败,请图片大小超过承受范围或网络有问题");
+                            ld.loadFailed();
+                        }
+                    }
+                });
+
+
+
+
+
+
+            }
+        };
+
+        new Thread(() -> {
+
+            // url路径
+            String url = "http://47.107.52.7:88/member/photo/share/save";
+
+            // 请求头
+            Headers headers = new Headers.Builder()
+                    .add("appId", UserData.appId)
+                    .add("appSecret", UserData.appSecret)
+                    .add("Accept", "application/json, text/plain, */*")
+                    .build();
+
+            // 请求体
+            // PS.用户也可以选择自定义一个实体类，然后使用类似fastjson的工具获取json串
+            Map<String, Object> bodyMap = new HashMap<>();
+            bodyMap.put("content", content);
+            bodyMap.put("imageCode", imageCode);
+            bodyMap.put("pUserId", UserData.getUserid());
+            bodyMap.put("title", title);
+            // 将Map转换为字符串类型加入请求体中
+            String body = JSON.toJSONString(bodyMap);
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //请求组合创建
+            Request request = new Request.Builder()
+                    .url(url)
+                    // 将请求头加至请求中
+                    .headers(headers)
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, body))
+                    .build();
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //发起请求，传入callback进行回调
+                client.newCall(request).enqueue(callback);
+            } catch (NetworkOnMainThreadException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+    }
 
 
     public static class ResponseBody <T> {

@@ -68,7 +68,7 @@ public class NotificationsFragment extends Fragment {
         Glide.with(root).load("https://guet-lab.oss-cn-hangzhou.aliyuncs.com/api/2022/10/18/9b2a90e1-6d9b-4c84-abe8-6f6f80f41d6e.jpg").into(circleImageView);
     }
         uName.setText(UserData.getUserName());
-        uId.setText(UserData.getUserid());
+        uId.setText("id: " + UserData.getUserid());
         uIndu.setText(UserData.introduce);
         if(UserData.sex == 0){
             uBtnSex.setImageResource(R.drawable.female);

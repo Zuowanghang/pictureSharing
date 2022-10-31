@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }else {
                                 sp.edit().putInt("start",0).apply();
                             }
+                            System.out.println(JSON.toJSONString(info.getData()));
                             UserData.avatar = info.getData().getAvatar();
                             UserData.introduce = info.getData().getIntroduce();
                             UserData.sex = info.getData().getSex();
