@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="5dp"
-                    android:text="@string/commit_time"
+                    android:text="三分钟前"
                     android:textSize="11sp" />
 
                 <ImageView

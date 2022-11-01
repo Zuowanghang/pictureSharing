@@ -47,6 +47,7 @@
         android:id="@+id/releaseInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="140dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/draftDetailsToolBar">
 
@@ -101,6 +102,7 @@
                 android:paddingEnd="20dp"
                 app:layout_constraintTop_toBottomOf="@+id/image">
 
+                <!-- 文章标题 -->
                 <EditText
                     android:id="@+id/draftArticleTitle"
                     android:layout_width="match_parent"
@@ -112,6 +114,7 @@
                     android:theme="@style/MyEditText"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <!-- 文章内容板块 -->
                 <EditText
                     android:id="@+id/draft_article_content"
                     android:layout_width="match_parent"
@@ -120,10 +123,11 @@
                     android:hint="@string/editYourText"
                     android:includeFontPadding="false"
                     android:lineSpacingMultiplier="1.2"
-                    android:minLines="8"
+                    android:minLines="10"
                     android:paddingTop="20dp"
                     android:paddingBottom="20dp"
                     android:textSize="18sp"
+
                     android:theme="@style/MyEditText"
                     app:layout_constraintTop_toBottomOf="@+id/draftArticleTitle" />
 
@@ -132,12 +136,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:background="@color/white"
                 app:layout_constraintTop_toBottomOf="@+id/draftArticle">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/topic"
+                    android:id="@+id/draft_topic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -149,6 +153,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:text="@string/release_topic"
                         android:textColor="@color/gray"
                         android:textSize="20sp"
@@ -159,7 +164,92 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
+                        android:layout_marginBottom="10dp"
                         android:src="@drawable/add_topic"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:ignore="ContentDescription" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/draft_article_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    app:layout_constraintTop_toBottomOf="@+id/draft_topic">
+
+                    <TextView
+                        android:id="@+id/tv_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tag"
+                        android:textColor="@color/gray"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/draft_original"
+                        android:layout_width="50dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/original"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/draft_non_original"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/draft_non_original"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/non_original"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/graft_non_copy"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/graft_non_copy"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/non_copy"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
+                        android:layout_marginEnd="5dp"
+                        app:layout_constraintEnd_toStartOf="@+id/draft_non_commerce"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/draft_non_commerce"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_tag"
+                        android:text="@string/non_commerce"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -167,9 +257,11 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/lightlyDarkWhite"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:background="@color/gray5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:ignore="ContentDescription" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -177,7 +269,7 @@
     <Toolbar
         android:id="@+id/releaseToolBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="60dp"
         android:background="@color/white"
         android:paddingEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
